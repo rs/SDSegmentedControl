@@ -18,7 +18,7 @@
 		53A2E91916135610002BE760 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 53A2E91816135610002BE760 /* Default-568h@2x.png */; };
 		53A2E91C16135610002BE760 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A2E91B16135610002BE760 /* ViewController.m */; };
 		53A2E91F16135610002BE760 /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 53A2E91D16135610002BE760 /* ViewController.xib */; };
-		53A2E9271613568D002BE760 /* SDWellSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A2E9251613568D002BE760 /* SDWellSegmentedControl.m */; };
+		53A2E9271613568D002BE760 /* SDSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A2E9251613568D002BE760 /* SDSegmentedControl.m */; };
 		53A2E929161357E0002BE760 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53A2E928161357E0002BE760 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
@@ -39,8 +39,8 @@
 		53A2E91A16135610002BE760 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		53A2E91B16135610002BE760 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		53A2E91E16135610002BE760 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ViewController.xib; sourceTree = "<group>"; };
-		53A2E9251613568D002BE760 /* SDWellSegmentedControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SDWellSegmentedControl.m; path = ../../SDWellSegmentedControl.m; sourceTree = "<group>"; };
-		53A2E9261613568D002BE760 /* SDWellSegmentedControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDWellSegmentedControl.h; path = ../../SDWellSegmentedControl.h; sourceTree = "<group>"; };
+		53A2E9251613568D002BE760 /* SDSegmentedControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SDSegmentedControl.m; path = ../../SDSegmentedControl.m; sourceTree = "<group>"; };
+		53A2E9261613568D002BE760 /* SDSegmentedControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDSegmentedControl.h; path = ../../SDSegmentedControl.h; sourceTree = "<group>"; };
 		53A2E928161357E0002BE760 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -95,8 +95,8 @@
 				53A2E91A16135610002BE760 /* ViewController.h */,
 				53A2E91B16135610002BE760 /* ViewController.m */,
 				53A2E91D16135610002BE760 /* ViewController.xib */,
-				53A2E9261613568D002BE760 /* SDWellSegmentedControl.h */,
-				53A2E9251613568D002BE760 /* SDWellSegmentedControl.m */,
+				53A2E9261613568D002BE760 /* SDSegmentedControl.h */,
+				53A2E9251613568D002BE760 /* SDSegmentedControl.m */,
 				53A2E90916135610002BE760 /* Supporting Files */,
 			);
 			path = Example;
@@ -185,7 +185,7 @@
 				53A2E90F16135610002BE760 /* main.m in Sources */,
 				53A2E91316135610002BE760 /* AppDelegate.m in Sources */,
 				53A2E91C16135610002BE760 /* ViewController.m in Sources */,
-				53A2E9271613568D002BE760 /* SDWellSegmentedControl.m in Sources */,
+				53A2E9271613568D002BE760 /* SDSegmentedControl.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -301,6 +301,7 @@
 				53A2E92416135610002BE760 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

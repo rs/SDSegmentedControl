@@ -621,7 +621,7 @@
 					<reference ref="975504140"/>
 					<reference ref="173457570"/>
 				</array>
-				<string key="8.CustomClassName">SDWellSegmentedControl</string>
+				<string key="8.CustomClassName">SDSegmentedControl</string>
 				<string key="8.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<boolean value="NO" key="8.IBViewMetadataTranslatesAutoresizingMaskIntoConstraints"/>
 				<integer value="2" key="8.IUISegmentedControlInspectorSelectedSegmentMetadataKey"/>

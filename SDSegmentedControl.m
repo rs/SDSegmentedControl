@@ -1,22 +1,22 @@
 //
-//  SDWellSegmentedControl.m
+//  SDSegmentedControl.m
 //  Created by Olivier Poitrey on 22/09/12.
 //
 
-#import "SDWellSegmentedControl.h"
+#import "SDSegmentedControl.h"
 #import <QuartzCore/QuartzCore.h>
 
-@interface WellView : UIView
+@interface StainView : UIView
 @end
 
-@interface SDWellSegmentedControl ()
+@interface SDSegmentedControl ()
 
 @property (strong, nonatomic) NSMutableArray *_items;
-@property (strong, nonatomic) UIView *_selectedWellView;
+@property (strong, nonatomic) UIView *_selectedStainView;
 
 @end
 
-@implementation SDWellSegmentedControl
+@implementation SDSegmentedControl
 {
     NSInteger _selectedSegmentIndex;
 }
@@ -71,24 +71,24 @@
     self.layer.shadowRadius = 2;
     self.layer.shadowOpacity = 0.6;
     self.layer.shadowOffset = CGSizeMake(0, 1);
-    [self addSubview:self._selectedWellView = WellView.new];
-    self._selectedWellView.backgroundColor = [UIColor colorWithRed:0.816 green:0.816 blue:0.816 alpha:1];
+    [self addSubview:self._selectedStainView = StainView.new];
+    self._selectedStainView.backgroundColor = [UIColor colorWithRed:0.816 green:0.816 blue:0.816 alpha:1];
 }
 
 - (void)insertSegmentWithImage:(UIImage *)image atIndex:(NSUInteger)segment animated:(BOOL)animated
 {
-    NSAssert(NO, @"insertSegmentWithImage:atIndex:animated: is not supported on SDWellSegmentedControl");
+    NSAssert(NO, @"insertSegmentWithImage:atIndex:animated: is not supported on SDSegmentedControl");
 }
 
 - (UIImage *)imageForSegmentAtIndex:(NSUInteger)segment
 {
-    NSAssert(NO, @"imageForSegmentAtIndex: is not supported on SDWellSegmentedControl");
+    NSAssert(NO, @"imageForSegmentAtIndex: is not supported on SDSegmentedControl");
     return nil;
 }
 
 - (void)setImage:(UIImage *)image forSegmentAtIndex:(NSUInteger)segment
 {
-    NSAssert(NO, @"setImage:forSegmentAtIndex: is not supported on SDWellSegmentedControl");
+    NSAssert(NO, @"setImage:forSegmentAtIndex: is not supported on SDSegmentedControl");
 }
 
 - (void)setTitle:(NSString *)title forSegmentAtIndex:(NSUInteger)segment
@@ -268,19 +268,19 @@
 
     if (self.selectedSegmentIndex == -1)
     {
-        self._selectedWellView.hidden = 0;
+        self._selectedStainView.hidden = 0;
         [self drawSelectedMaskAtPosition:-1];
     }
     else
     {
         UIView *selectedItem = self._items[self.selectedSegmentIndex];
-        CGRect wellFrame = CGRectInset(selectedItem.frame, -15, -3);
-        self._selectedWellView.layer.cornerRadius = wellFrame.size.height / 2;
-        BOOL animated = !self._selectedWellView.hidden && !CGRectEqualToRect(self._selectedWellView.frame, CGRectZero);
+        CGRect stainFrame = CGRectInset(selectedItem.frame, -15, -3);
+        self._selectedStainView.layer.cornerRadius = stainFrame.size.height / 2;
+        BOOL animated = !self._selectedStainView.hidden && !CGRectEqualToRect(self._selectedStainView.frame, CGRectZero);
         UIView.animationsEnabled = animated;
         [UIView animateWithDuration:animated ? 0.2 : 0 animations:^
         {
-            self._selectedWellView.frame = wellFrame;
+            self._selectedStainView.frame = stainFrame;
         }
         completion:^(BOOL finished)
         {
@@ -336,7 +336,7 @@
 
 @end
 
-@implementation WellView
+@implementation StainView
 
 - (id)init
 {
