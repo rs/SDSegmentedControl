@@ -5,7 +5,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SDWheelSegmentedControl : UISegmentedControl
+@interface SDWellSegmentedControl : UISegmentedControl
 
 @property (assign, nonatomic) CGFloat arrowSize;
 

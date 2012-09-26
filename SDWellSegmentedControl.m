@@ -1,22 +1,22 @@
 //
-//  SDWheelSegmentedControl.m
+//  SDWellSegmentedControl.m
 //  Created by Olivier Poitrey on 22/09/12.
 //
 
-#import "SDWheelSegmentedControl.h"
+#import "SDWellSegmentedControl.h"
 #import <QuartzCore/QuartzCore.h>
 
-@interface WheelView : UIView
+@interface WellView : UIView
 @end
 
-@interface SDWheelSegmentedControl ()
+@interface SDWellSegmentedControl ()
 
 @property (strong, nonatomic) NSMutableArray *_items;
-@property (strong, nonatomic) UIView *_selectedWheelView;
+@property (strong, nonatomic) UIView *_selectedWellView;
 
 @end
 
-@implementation SDWheelSegmentedControl
+@implementation SDWellSegmentedControl
 {
     NSInteger _selectedSegmentIndex;
 }
@@ -71,24 +71,24 @@
     self.layer.shadowRadius = 2;
     self.layer.shadowOpacity = 0.6;
     self.layer.shadowOffset = CGSizeMake(0, 1);
-    [self addSubview:self._selectedWheelView = WheelView.new];
-    self._selectedWheelView.backgroundColor = [UIColor colorWithRed:0.816 green:0.816 blue:0.816 alpha:1];
+    [self addSubview:self._selectedWellView = WellView.new];
+    self._selectedWellView.backgroundColor = [UIColor colorWithRed:0.816 green:0.816 blue:0.816 alpha:1];
 }
 
 - (void)insertSegmentWithImage:(UIImage *)image atIndex:(NSUInteger)segment animated:(BOOL)animated
 {
-    NSAssert(NO, @"insertSegmentWithImage:atIndex:animated: is not supported on SDWheelSegmentedControl");
+    NSAssert(NO, @"insertSegmentWithImage:atIndex:animated: is not supported on SDWellSegmentedControl");
 }
 
 - (UIImage *)imageForSegmentAtIndex:(NSUInteger)segment
 {
-    NSAssert(NO, @"imageForSegmentAtIndex: is not supported on SDWheelSegmentedControl");
+    NSAssert(NO, @"imageForSegmentAtIndex: is not supported on SDWellSegmentedControl");
     return nil;
 }
 
 - (void)setImage:(UIImage *)image forSegmentAtIndex:(NSUInteger)segment
 {
-    NSAssert(NO, @"setImage:forSegmentAtIndex: is not supported on SDWheelSegmentedControl");
+    NSAssert(NO, @"setImage:forSegmentAtIndex: is not supported on SDWellSegmentedControl");
 }
 
 - (void)setTitle:(NSString *)title forSegmentAtIndex:(NSUInteger)segment
@@ -268,19 +268,19 @@
 
     if (self.selectedSegmentIndex == -1)
     {
-        self._selectedWheelView.hidden = 0;
+        self._selectedWellView.hidden = 0;
         [self drawSelectedMaskAtPosition:-1];
     }
     else
     {
         UIView *selectedItem = self._items[self.selectedSegmentIndex];
-        CGRect wheelFrame = CGRectInset(selectedItem.frame, -15, -3);
-        self._selectedWheelView.layer.cornerRadius = wheelFrame.size.height / 2;
-        BOOL animated = !self._selectedWheelView.hidden && !CGRectEqualToRect(self._selectedWheelView.frame, CGRectZero);
+        CGRect wellFrame = CGRectInset(selectedItem.frame, -15, -3);
+        self._selectedWellView.layer.cornerRadius = wellFrame.size.height / 2;
+        BOOL animated = !self._selectedWellView.hidden && !CGRectEqualToRect(self._selectedWellView.frame, CGRectZero);
         UIView.animationsEnabled = animated;
         [UIView animateWithDuration:animated ? 0.2 : 0 animations:^
         {
-            self._selectedWheelView.frame = wheelFrame;
+            self._selectedWellView.frame = wellFrame;
         }
         completion:^(BOOL finished)
         {
@@ -336,7 +336,7 @@
 
 @end
 
-@implementation WheelView
+@implementation WellView
 
 - (id)init
 {
