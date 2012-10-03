@@ -15,7 +15,8 @@ controls.
 ## TODO:
 
 - Appearance customization thru UIAppearance
-- Disabled state Custom segment width
+- Disabled state
+- Custom segment width
 
 # Usage
 
