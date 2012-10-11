@@ -17,6 +17,7 @@ controls.
 - Appearance customization thru UIAppearance
 - Disabled state
 - Custom segment width
+- Horizontal scrolling when tabs don't fit
 
 # Usage
 
