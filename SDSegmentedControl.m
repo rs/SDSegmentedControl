@@ -66,11 +66,13 @@
     _arrowSize = 8;
     self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     ((CAShapeLayer *)self.layer).fillColor = [UIColor colorWithRed:0.961 green:0.961 blue:0.961 alpha:1].CGColor;
+    
     self.layer.backgroundColor = UIColor.clearColor.CGColor;
     self.layer.shadowColor = UIColor.blackColor.CGColor;
     self.layer.shadowRadius = 2;
-    self.layer.shadowOpacity = 0.6;
+    self.layer.shadowOpacity = 0.3;
     self.layer.shadowOffset = CGSizeMake(0, 1);
+
     [self addSubview:self._selectedStainView = StainView.new];
     self._selectedStainView.backgroundColor = [UIColor colorWithRed:0.816 green:0.816 blue:0.816 alpha:1];
 }
@@ -320,7 +322,27 @@
     }
     [path addLineToPoint:CGPointMake(CGRectGetMinX(bounds), CGRectGetMaxY(bounds))];
     [path addLineToPoint:bounds.origin];
+
     ((CAShapeLayer *)self.layer).path = path.CGPath;
+
+    UIBezierPath *shadowPath = UIBezierPath.new;
+    
+    bounds.origin.y += 5;
+    bounds.size.height -= 5;
+    
+    [shadowPath moveToPoint:bounds.origin];
+    [shadowPath addLineToPoint:CGPointMake(CGRectGetMaxX(bounds), CGRectGetMinY(bounds))];
+    [shadowPath addLineToPoint:CGPointMake(CGRectGetMaxX(bounds), CGRectGetMaxY(bounds))];
+    if (position >= 0)
+    {
+        [shadowPath addLineToPoint:CGPointMake(position + self.arrowSize, CGRectGetMaxY(bounds))];
+        [shadowPath addLineToPoint:CGPointMake(position, CGRectGetMaxY(bounds) - self.arrowSize)];
+        [shadowPath addLineToPoint:CGPointMake(position - self.arrowSize, CGRectGetMaxY(bounds))];
+    }
+    [shadowPath addLineToPoint:CGPointMake(CGRectGetMinX(bounds), CGRectGetMaxY(bounds))];
+    [shadowPath addLineToPoint:bounds.origin];
+    
+    self.layer.shadowPath = shadowPath.CGPath;
 }
 
 - (void)handleSelect:(UIGestureRecognizer *)gestureRecognizer
