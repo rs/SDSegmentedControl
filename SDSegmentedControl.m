@@ -63,14 +63,14 @@
     [self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     _selectedSegmentIndex = -1;
     self._items = NSMutableArray.array;
-    _arrowSize = 8;
+    _arrowSize = 6.5;
     self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     ((CAShapeLayer *)self.layer).fillColor = [UIColor colorWithRed:0.961 green:0.961 blue:0.961 alpha:1].CGColor;
     
     self.layer.backgroundColor = UIColor.clearColor.CGColor;
     self.layer.shadowColor = UIColor.blackColor.CGColor;
-    self.layer.shadowRadius = 2;
-    self.layer.shadowOpacity = 0.3;
+    self.layer.shadowRadius = .8;
+    self.layer.shadowOpacity = .6;
     self.layer.shadowOffset = CGSizeMake(0, 1);
 
     [self addSubview:self._selectedStainView = StainView.new];
@@ -114,8 +114,8 @@
     UILabel *segmentView = UILabel.new;
     segmentView.alpha = 0;
     segmentView.text = title;
-    segmentView.textColor = [UIColor colorWithRed:0.451 green:0.451 blue:0.451 alpha:1];
-    segmentView.font = [UIFont boldSystemFontOfSize:15];
+    segmentView.textColor = [UIColor colorWithRed:0.235 green:0.235 blue:0.235 alpha:1];
+    segmentView.font = [UIFont boldSystemFontOfSize:14];
     segmentView.backgroundColor = UIColor.clearColor;
     segmentView.userInteractionEnabled = YES;
     [segmentView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSelect:)]];
@@ -203,7 +203,7 @@
     CGRect frame = self.frame;
     if (frame.size.height == 0)
     {
-        frame.size.height = 45;
+        frame.size.height = 43;
     }
     if (frame.size.width == 0)
     {
@@ -245,11 +245,11 @@
         totalItemWidth += CGRectGetWidth(item.bounds);
     }
 
-    CGFloat spaceLeft = CGRectGetWidth(self.bounds) - totalItemWidth;
-    CGFloat interItemSpace = spaceLeft / (CGFloat)(self._items.count + 1);
-    CGFloat itemsVAlignCenter = (CGRectGetHeight(self.bounds) - self.arrowSize / 2) / 2;
+    CGFloat interItemSpace = 30;
+    CGFloat spaceLeft = CGRectGetWidth(self.bounds) - (totalItemWidth + (interItemSpace * (self.numberOfSegments - 1)));
+    CGFloat itemsVAlignCenter = ((CGRectGetHeight(self.bounds) - self.arrowSize / 2) / 2) + 1;
 
-    __block CGFloat pos = interItemSpace;
+    __block CGFloat pos = spaceLeft / 2;
     [self._items enumerateObjectsUsingBlock:^(UIView *item, NSUInteger idx, BOOL *stop)
     {
         item.alpha = 1;
@@ -276,7 +276,7 @@
     else
     {
         UIView *selectedItem = self._items[self.selectedSegmentIndex];
-        CGRect stainFrame = CGRectInset(selectedItem.frame, -15, -3);
+        CGRect stainFrame = CGRectInset(selectedItem.frame, -8, -2.5);
         self._selectedStainView.layer.cornerRadius = stainFrame.size.height / 2;
         BOOL animated = !self._selectedStainView.hidden && !CGRectEqualToRect(self._selectedStainView.frame, CGRectZero);
         UIView.animationsEnabled = animated;
@@ -290,13 +290,13 @@
             {
                 if (item == selectedItem)
                 {
-                    item.textColor = [UIColor colorWithRed:0.169 green:0.169 blue:0.169 alpha:1];
+                    item.textColor = [UIColor colorWithRed:0.235 green:0.235 blue:0.235 alpha:1];
                     item.shadowColor = UIColor.whiteColor;
-                    item.shadowOffset = CGSizeMake(0, 1);
+                    item.shadowOffset = CGSizeMake(0, .5);
                 }
                 else
                 {
-                    item.textColor = [UIColor colorWithRed:0.451 green:0.451 blue:0.451 alpha:1];
+                    item.textColor = [UIColor colorWithRed:0.392 green:0.392 blue:0.392 alpha:1];
                 }
             }
 
@@ -309,37 +309,70 @@
 - (void)drawSelectedMaskAtPosition:(CGFloat)position
 {
     // TODO: make this animatable
-    UIBezierPath *path = UIBezierPath.new;
+
     CGRect bounds = self.bounds;
+    CGFloat left = CGRectGetMinX(bounds);
+    CGFloat right = CGRectGetMaxX(bounds);
+    CGFloat top = CGRectGetMinY(bounds);
+    CGFloat bottom = CGRectGetMaxY(bounds);
+
+    //
+    // Mask
+    //
+    UIBezierPath *path = UIBezierPath.new;
     [path moveToPoint:bounds.origin];
-    [path addLineToPoint:CGPointMake(CGRectGetMaxX(bounds), CGRectGetMinY(bounds))];
-    [path addLineToPoint:CGPointMake(CGRectGetMaxX(bounds), CGRectGetMaxY(bounds))];
+    [path addLineToPoint:CGPointMake(right, top)];
+    [path addLineToPoint:CGPointMake(right, bottom)];
     if (position >= 0)
     {
-        [path addLineToPoint:CGPointMake(position + self.arrowSize, CGRectGetMaxY(bounds))];
-        [path addLineToPoint:CGPointMake(position, CGRectGetMaxY(bounds) - self.arrowSize)];
-        [path addLineToPoint:CGPointMake(position - self.arrowSize, CGRectGetMaxY(bounds))];
+        [path addLineToPoint:CGPointMake(position + self.arrowSize, bottom)];
+        [path addLineToPoint:CGPointMake(position, bottom - self.arrowSize)];
+        [path addLineToPoint:CGPointMake(position - self.arrowSize, bottom)];
     }
-    [path addLineToPoint:CGPointMake(CGRectGetMinX(bounds), CGRectGetMaxY(bounds))];
+    [path addLineToPoint:CGPointMake(left, bottom)];
     [path addLineToPoint:bounds.origin];
 
     ((CAShapeLayer *)self.layer).path = path.CGPath;
 
-    UIBezierPath *shadowPath = UIBezierPath.new;
-    
-    bounds.origin.y += 5;
-    bounds.size.height -= 5;
-    
-    [shadowPath moveToPoint:bounds.origin];
-    [shadowPath addLineToPoint:CGPointMake(CGRectGetMaxX(bounds), CGRectGetMinY(bounds))];
-    [shadowPath addLineToPoint:CGPointMake(CGRectGetMaxX(bounds), CGRectGetMaxY(bounds))];
+    //
+    // Bottom white line
+    //
+    CAShapeLayer *borderBottomLayer = [CAShapeLayer layer];
+    borderBottomLayer.frame = self.frame;
+    borderBottomLayer.strokeColor = UIColor.whiteColor.CGColor;
+    borderBottomLayer.lineWidth = .5;
+    borderBottomLayer.fillColor = nil;
+
+    UIBezierPath *borderBottomPath = UIBezierPath.new;
+    CGFloat lineY = bottom - borderBottomLayer.lineWidth;
+    [borderBottomPath moveToPoint:CGPointMake(left, lineY)];
     if (position >= 0)
     {
-        [shadowPath addLineToPoint:CGPointMake(position + self.arrowSize, CGRectGetMaxY(bounds))];
-        [shadowPath addLineToPoint:CGPointMake(position, CGRectGetMaxY(bounds) - self.arrowSize)];
-        [shadowPath addLineToPoint:CGPointMake(position - self.arrowSize, CGRectGetMaxY(bounds))];
+        [borderBottomPath addLineToPoint:CGPointMake(position - self.arrowSize + borderBottomLayer.lineWidth, lineY)];
+        [borderBottomPath addLineToPoint:CGPointMake(position, lineY - self.arrowSize + borderBottomLayer.lineWidth / 2)];
+        [borderBottomPath addLineToPoint:CGPointMake(position + self.arrowSize, lineY)];
     }
-    [shadowPath addLineToPoint:CGPointMake(CGRectGetMinX(bounds), CGRectGetMaxY(bounds))];
+    [borderBottomPath addLineToPoint:CGPointMake(right, lineY)];
+    borderBottomLayer.path = borderBottomPath.CGPath;
+    [self.layer addSublayer:borderBottomLayer];
+
+    //
+    // Shadow mask
+    //
+    bounds.origin.y += 5;
+    bounds.size.height -= 5;
+
+    UIBezierPath *shadowPath = UIBezierPath.new;
+    [shadowPath moveToPoint:bounds.origin];
+    [shadowPath addLineToPoint:CGPointMake(right, top)];
+    [shadowPath addLineToPoint:CGPointMake(right, bottom)];
+    if (position >= 0)
+    {
+        [shadowPath addLineToPoint:CGPointMake(position + self.arrowSize, bottom)];
+        [shadowPath addLineToPoint:CGPointMake(position, bottom - self.arrowSize)];
+        [shadowPath addLineToPoint:CGPointMake(position - self.arrowSize, bottom)];
+    }
+    [shadowPath addLineToPoint:CGPointMake(left, bottom)];
     [shadowPath addLineToPoint:bounds.origin];
     
     self.layer.shadowPath = shadowPath.CGPath;
@@ -379,12 +412,12 @@
 {
     CGContextRef context = UIGraphicsGetCurrentContext();
 
-    CGPathRef roundedRect = [UIBezierPath bezierPathWithRoundedRect:CGRectInset(rect, -1, -1) cornerRadius:self.layer.cornerRadius].CGPath;
+    CGPathRef roundedRect = [UIBezierPath bezierPathWithRoundedRect:CGRectInset(rect, -.5, -.5) cornerRadius:self.layer.cornerRadius].CGPath;
     CGContextAddPath(context, roundedRect);
     CGContextClip(context);
 
     CGContextAddPath(context, roundedRect);
-    CGContextSetShadowWithColor(UIGraphicsGetCurrentContext(), CGSizeMake(0, 1), 3, UIColor.blackColor.CGColor);
+    CGContextSetShadowWithColor(UIGraphicsGetCurrentContext(), CGSizeMake(0, .5), 2.5, UIColor.blackColor.CGColor);
     CGContextSetStrokeColorWithColor(context, self.backgroundColor.CGColor);
     CGContextStrokePath(context);
 }
