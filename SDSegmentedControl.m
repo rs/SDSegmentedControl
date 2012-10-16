@@ -19,6 +19,7 @@
 @implementation SDSegmentedControl
 {
     NSInteger _selectedSegmentIndex;
+    CAShapeLayer *_borderBottomLayer;
 }
 
 + (Class)layerClass
@@ -337,33 +338,34 @@
     //
     // Bottom white line
     //
-    CAShapeLayer *borderBottomLayer = [CAShapeLayer layer];
-    borderBottomLayer.frame = self.frame;
-    borderBottomLayer.strokeColor = UIColor.whiteColor.CGColor;
-    borderBottomLayer.lineWidth = .5;
-    borderBottomLayer.fillColor = nil;
+    if (!_borderBottomLayer)
+    {
+        _borderBottomLayer = [CAShapeLayer layer];
+        _borderBottomLayer.strokeColor = UIColor.whiteColor.CGColor;
+        _borderBottomLayer.lineWidth = .5;
+        _borderBottomLayer.fillColor = nil;
+        [self.layer addSublayer:_borderBottomLayer];
+    }
+    _borderBottomLayer.frame = self.bounds;
 
     UIBezierPath *borderBottomPath = UIBezierPath.new;
-    CGFloat lineY = bottom - borderBottomLayer.lineWidth;
+    CGFloat lineY = bottom - _borderBottomLayer.lineWidth;
     [borderBottomPath moveToPoint:CGPointMake(left, lineY)];
     if (position >= 0)
     {
-        [borderBottomPath addLineToPoint:CGPointMake(position - self.arrowSize + borderBottomLayer.lineWidth, lineY)];
-        [borderBottomPath addLineToPoint:CGPointMake(position, lineY - self.arrowSize + borderBottomLayer.lineWidth / 2)];
+        [borderBottomPath addLineToPoint:CGPointMake(position - self.arrowSize + _borderBottomLayer.lineWidth, lineY)];
+        [borderBottomPath addLineToPoint:CGPointMake(position, lineY - self.arrowSize + _borderBottomLayer.lineWidth / 2)];
         [borderBottomPath addLineToPoint:CGPointMake(position + self.arrowSize, lineY)];
     }
     [borderBottomPath addLineToPoint:CGPointMake(right, lineY)];
-    borderBottomLayer.path = borderBottomPath.CGPath;
-    [self.layer addSublayer:borderBottomLayer];
+    _borderBottomLayer.path = borderBottomPath.CGPath;
 
     //
     // Shadow mask
     //
-    bounds.origin.y += 5;
-    bounds.size.height -= 5;
-
+    top += 10;
     UIBezierPath *shadowPath = UIBezierPath.new;
-    [shadowPath moveToPoint:bounds.origin];
+    [shadowPath moveToPoint:CGPointMake(left, top)];
     [shadowPath addLineToPoint:CGPointMake(right, top)];
     [shadowPath addLineToPoint:CGPointMake(right, bottom)];
     if (position >= 0)
