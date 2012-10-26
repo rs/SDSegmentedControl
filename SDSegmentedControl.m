@@ -190,6 +190,7 @@
 {
     [self._items makeObjectsPerformSelector:@selector(removeFromSuperview)];
     [self._items removeAllObjects];
+    self.selectedSegmentIndex = -1;
     [self setNeedsLayout];
 }
 
