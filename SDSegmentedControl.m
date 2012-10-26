@@ -222,7 +222,7 @@
 {
     if (_selectedSegmentIndex != selectedSegmentIndex)
     {
-        NSParameterAssert(selectedSegmentIndex < self._items.count);
+        NSParameterAssert(selectedSegmentIndex < (NSInteger)self._items.count);
         _selectedSegmentIndex = selectedSegmentIndex;
         [self setNeedsLayout];
     }
