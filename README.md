@@ -4,7 +4,7 @@ A drop-in remplacement for UISegmentedControl that mimic iOS 6 AppStore tab cont
 
 ![The only good piece of UI to extract for this terrible app](http://d.pr/i/Fn5X+)
 
-## Features:
+## Features
 
 - Segments with image, image and text or text only
 - Interface Builder support (just throw a UISegmentedControl and change its class SDSegmentedControl)
@@ -16,23 +16,23 @@ A drop-in remplacement for UISegmentedControl that mimic iOS 6 AppStore tab cont
 - UIControl events for value changes
 - Enable or disable specific segments
 
-## TODO:
+### TODO
 
 - Custom segment width
 
-# Usage
+## Usage
 
 Import `SDSegmentedControl.h` and `SDSegmentedControl.m` into your project and add `QuartzCore` framework to `Build Phases` -> `Link Binary With Libraries`.
 
 You can then use `SDSegmentedControl` class as you would use normal `UISegmentedControl`.
 
-# Licenses
+## Licenses
 
 All source code is licensed under the [MIT-License](https://raw.github.com/rs/SDSegmentedControl/master/MIT-LICENSE).
 
 The icons in the example project are taken from [Glypish Free Iconscreated by Joseph Wain](http://glyphish.com) and licensed under the Creative Commons Attribution 3.0 United States License.
 
-# Authors
+## Authors
 
 - Olivier Poitrey <rs@dailymotion.com>
 - Marius Rackwitz <git@mariusrackwitz.de>
