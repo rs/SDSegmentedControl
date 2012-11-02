@@ -15,5 +15,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *selectedSegmentLabel;
 - (IBAction)removeSegment:(id)sender;
 - (IBAction)addSegment:(id)sender;
+- (IBAction)disableSegment:(id)sender;
 
 @end

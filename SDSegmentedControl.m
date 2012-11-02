@@ -11,10 +11,9 @@
 
 const NSTimeInterval kSDSegmentedControlDefaultDuration = 0.2;
 const CGFloat kSDSegmentedControlArrowSize = 6.5;
+const CGFloat kSDSegmentedControlInterItemSpace = 30.0;
+const UIEdgeInsets kSDSegmentedControlStainEdgeInsets = {-3.5, -8, -2.5, -8};
 
-
-@interface StainView : UIView
-@end
 
 @interface SDSegmentedControl ()
 
@@ -73,6 +72,8 @@ const CGFloat kSDSegmentedControlArrowSize = 6.5;
     // Init properties
     _lastSelectedSegmentIndex = -1;
     _selectedSegmentIndex = -1;
+    _interItemSpace = kSDSegmentedControlInterItemSpace;
+    _stainEdgeInsets = kSDSegmentedControlStainEdgeInsets;
     __items = NSMutableArray.array;
 
     // Appearance properties
@@ -99,7 +100,7 @@ const CGFloat kSDSegmentedControlArrowSize = 6.5;
     [self.layer addSublayer:_borderBottomLayer];
 
 
-    [self addSubview:self._selectedStainView = StainView.new];
+    [self addSubview:self._selectedStainView = SDStainView.new];
     self._selectedStainView.backgroundColor = [UIColor colorWithRed:0.816 green:0.816 blue:0.816 alpha:1];
 }
 
@@ -137,14 +138,10 @@ const CGFloat kSDSegmentedControlArrowSize = 6.5;
 
 - (void)insertSegmentWithTitle:(NSString *)title atIndex:(NSUInteger)segment animated:(BOOL)animated
 {
-    UILabel *segmentView = UILabel.new;
+    SDSegmentView *segmentView = SDSegmentView.new;
+    [segmentView addTarget:self action:@selector(handleSelect:) forControlEvents:UIControlEventTouchUpInside];
     segmentView.alpha = 0;
-    segmentView.text = title;
-    segmentView.textColor = [UIColor colorWithRed:0.235 green:0.235 blue:0.235 alpha:1];
-    segmentView.font = [UIFont boldSystemFontOfSize:14];
-    segmentView.backgroundColor = UIColor.clearColor;
-    segmentView.userInteractionEnabled = YES;
-    [segmentView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSelect:)]];
+    [segmentView setTitle:title forState:UIControlStateNormal];
     [segmentView sizeToFit];
 
     NSUInteger index = MAX(MIN(segment, self.numberOfSegments), 0);
@@ -298,8 +295,7 @@ const CGFloat kSDSegmentedControlArrowSize = 6.5;
         totalItemWidth += CGRectGetWidth(item.bounds);
     }
 
-    CGFloat interItemSpace = 30;
-    CGFloat spaceLeft = CGRectGetWidth(self.bounds) - (totalItemWidth + (interItemSpace * (self.numberOfSegments - 1)));
+    CGFloat spaceLeft = CGRectGetWidth(self.bounds) - (totalItemWidth + (self.interItemSpace * (self.numberOfSegments - 1)));
     CGFloat itemsVAlignCenter = ((CGRectGetHeight(self.bounds) - self.arrowSize / 2) / 2) + 1;
 
     __block CGFloat pos = spaceLeft / 2;
@@ -315,7 +311,7 @@ const CGFloat kSDSegmentedControlArrowSize = 6.5;
         {
             item.frame = CGRectMake(pos, 0, CGRectGetWidth(item.bounds), itemsVAlignCenter * 2);
         }
-        pos += CGRectGetWidth(item.bounds) + interItemSpace;
+        pos += CGRectGetWidth(item.bounds) + self.interItemSpace;
     }];
     for (UIView *item in self._items)
     {
@@ -333,7 +329,7 @@ const CGFloat kSDSegmentedControlArrowSize = 6.5;
     {
         UIView *selectedItem = self._items[self.selectedSegmentIndex];
         position = selectedItem.center.x;
-        CGRect stainFrame = CGRectInset(selectedItem.frame, -8, -2.5);
+        CGRect stainFrame = UIEdgeInsetsInsetRect(selectedItem.frame, self.stainEdgeInsets);
         self._selectedStainView.layer.cornerRadius = stainFrame.size.height / 2;
         UIView.animationsEnabled = animated;
         [UIView animateWithDuration:animated ? self.animationDuration : 0 animations:^
@@ -342,18 +338,9 @@ const CGFloat kSDSegmentedControlArrowSize = 6.5;
         }
         completion:^(BOOL finished)
         {
-            for (UILabel *item in self._items)
+            for (SDSegmentView *item in self._items)
             {
-                if (item == selectedItem)
-                {
-                    item.textColor = [UIColor colorWithRed:0.235 green:0.235 blue:0.235 alpha:1];
-                    item.shadowColor = UIColor.whiteColor;
-                    item.shadowOffset = CGSizeMake(0, .5);
-                }
-                else
-                {
-                    item.textColor = [UIColor colorWithRed:0.392 green:0.392 blue:0.392 alpha:1];
-                }
+                item.selected = item == selectedItem;
             }
         }];
         UIView.animationsEnabled = YES;
@@ -363,7 +350,7 @@ const CGFloat kSDSegmentedControlArrowSize = 6.5;
     CGFloat oldPosition = CGFLOAT_MAX;
     if (animated && _lastSelectedSegmentIndex != self.selectedSegmentIndex && _lastSelectedSegmentIndex >= 0 && _lastSelectedSegmentIndex < self._items.count)
     {
-        UIView *lastSegmentView = [self._items objectAtIndex:_lastSelectedSegmentIndex];
+        SDSegmentView *lastSegmentView = [self._items objectAtIndex:_lastSelectedSegmentIndex];
         oldPosition = lastSegmentView.center.x;
     }
 
@@ -530,8 +517,8 @@ const CGFloat kSDSegmentedControlArrowSize = 6.5;
 
 - (void)addAnimationWithDuration:(CFTimeInterval)duration onLayer:(CALayer *)layer forKey:(NSString *)key toPath:(UIBezierPath *)path
 {
-    NSString* camelCaseKeyPath;
-    NSString* keyPath;
+    NSString *camelCaseKeyPath;
+    NSString *keyPath;
 
     if (key == @"path")
     {
@@ -544,7 +531,7 @@ const CGFloat kSDSegmentedControlArrowSize = 6.5;
         keyPath = [NSString stringWithFormat:@"%@.path", key];
     }
 
-    CABasicAnimation* pathAnimation = [CABasicAnimation animationWithKeyPath:camelCaseKeyPath];
+    CABasicAnimation *pathAnimation = [CABasicAnimation animationWithKeyPath:camelCaseKeyPath];
     pathAnimation.removedOnCompletion = NO;
     pathAnimation.fillMode = kCAFillModeForwards;
     pathAnimation.duration = duration;
@@ -699,9 +686,9 @@ const CGFloat kSDSegmentedControlArrowSize = 6.5;
     }
 }
 
-- (void)handleSelect:(UIGestureRecognizer *)gestureRecognizer
+- (void)handleSelect:(SDSegmentView *)view
 {
-    NSUInteger index = [self._items indexOfObject:gestureRecognizer.view];
+    NSUInteger index = [self._items indexOfObject:view];
     if (index != NSNotFound && index != self.selectedSegmentIndex)
     {
         self.selectedSegmentIndex = index;
@@ -712,13 +699,64 @@ const CGFloat kSDSegmentedControlArrowSize = 6.5;
 
 @end
 
-@implementation StainView
+
+@implementation SDSegmentView
+
++ (SDSegmentView *)new
+{
+    SDSegmentView *segmentView = [self.class buttonWithType:UIButtonTypeCustom];
+    segmentView.titleLabel.shadowOffset = CGSizeMake(0, 0.5);
+    segmentView.titleLabel.font = [UIFont boldSystemFontOfSize:14];
+    segmentView.userInteractionEnabled = YES;
+    segmentView.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+    segmentView.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    segmentView.titleEdgeInsets = UIEdgeInsetsMake(0, 4.0, 0, -4.0); // Space between text and image
+    segmentView.imageEdgeInsets = UIEdgeInsetsMake(0, 4.0, 0, -4.0); // Space between image and stain
+    segmentView.contentEdgeInsets = UIEdgeInsetsMake(0, 0.0, 0,  8.0); // Enlarge touchable area
+
+#ifdef SDSegmentedControlDebug
+    segmentView.backgroundColor            = [UIColor colorWithHue:1.00 saturation:1.0 brightness:1.0 alpha:0.5];
+    segmentView.imageView.backgroundColor  = [UIColor colorWithHue:0.66 saturation:1.0 brightness:1.0 alpha:0.5];
+    segmentView.titleLabel.backgroundColor = [UIColor colorWithHue:0.33 saturation:1.0 brightness:1.0 alpha:0.5];
+#endif
+
+    [segmentView setTitleColor:[UIColor colorWithWhite:0.392 alpha:1] forState:UIControlStateNormal];
+    [segmentView setTitleShadowColor:UIColor.whiteColor forState:UIControlStateNormal];
+
+    [segmentView setTitleColor:[UIColor colorWithWhite:0.235 alpha:1] forState:UIControlStateSelected];
+    [segmentView setTitleShadowColor:UIColor.whiteColor forState:UIControlStateSelected];
+
+    [segmentView setTitleColor:[UIColor colorWithWhite:0.500 alpha:1] forState:UIControlStateDisabled];
+    [segmentView setTitleShadowColor:UIColor.darkGrayColor forState:UIControlStateDisabled];
+
+    return segmentView;
+}
+
++ (id)appearance
+{
+    return [self appearanceWhenContainedIn:SDSegmentedControl.class, nil];
+}
+
+@end
+
+
+@implementation SDStainView
+
++ (id)appearance
+{
+    return [self appearanceWhenContainedIn:SDSegmentedControl.class, nil];
+}
 
 - (id)init
 {
     if ((self = [super init]))
     {
         self.clipsToBounds = YES;
+
+        _edgeInsets = UIEdgeInsetsMake(-.5, -.5, -.5, -.5);
+        _shadowOffset = CGSizeMake(0, .5);
+        _shadowBlur = 2.5;
+        _shadowColor = UIColor.blackColor;
     }
     return self;
 }
@@ -733,12 +771,12 @@ const CGFloat kSDSegmentedControlArrowSize = 6.5;
 {
     CGContextRef context = UIGraphicsGetCurrentContext();
 
-    CGPathRef roundedRect = [UIBezierPath bezierPathWithRoundedRect:CGRectInset(rect, -.5, -.5) cornerRadius:self.layer.cornerRadius].CGPath;
+    CGPathRef roundedRect = [UIBezierPath bezierPathWithRoundedRect:UIEdgeInsetsInsetRect(rect, self.edgeInsets) cornerRadius:self.layer.cornerRadius].CGPath;
     CGContextAddPath(context, roundedRect);
     CGContextClip(context);
 
     CGContextAddPath(context, roundedRect);
-    CGContextSetShadowWithColor(UIGraphicsGetCurrentContext(), CGSizeMake(0, .5), 2.5, UIColor.blackColor.CGColor);
+    CGContextSetShadowWithColor(UIGraphicsGetCurrentContext(), self.shadowOffset, self.shadowBlur, self.shadowColor.CGColor);
     CGContextSetStrokeColorWithColor(context, self.backgroundColor.CGColor);
     CGContextStrokePath(context);
 }

@@ -46,4 +46,10 @@
     [self.segmentedControl insertSegmentWithTitle:@"New" atIndex:0 animated:YES];
     [self updateSelectedSegmentLabel];
 }
+
+- (IBAction)disableSegment:(id)sender
+{
+    [self.segmentedControl setEnabled:NO forSegmentAtIndex:self.segmentedControl.selectedSegmentIndex];
+}
+
 @end

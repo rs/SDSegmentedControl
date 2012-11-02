@@ -11,10 +11,12 @@ controls.
   its class SDSegmentedControl)
 - Animated segment selection
 - Content aware dynamic segment width
+- Animated segment selection, with animated arrow
+- Appearance customization thru UIAppearance
+- UIControl events for value changes
 
 ## TODO:
 
-- Appearance customization thru UIAppearance
 - Disabled state
 - Custom segment width
 - Horizontal scrolling when tabs don't fit
