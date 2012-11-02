@@ -7,6 +7,7 @@ controls.
 
 ## Features:
 
+- Segments with image, image and text or text only
 - Interface Builder support (just throw a UISegmentedControl and change
   its class SDSegmentedControl)
 - Animated segment selection

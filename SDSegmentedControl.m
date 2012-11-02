@@ -13,6 +13,7 @@ const NSTimeInterval kSDSegmentedControlDefaultDuration = 0.2;
 const CGFloat kSDSegmentedControlArrowSize = 6.5;
 const CGFloat kSDSegmentedControlInterItemSpace = 30.0;
 const UIEdgeInsets kSDSegmentedControlStainEdgeInsets = {-3.5, -8, -2.5, -8};
+const CGSize kSDSegmentedControlImageSize = {18, 18};
 
 
 @interface SDSegmentedControl ()
@@ -74,6 +75,7 @@ const UIEdgeInsets kSDSegmentedControlStainEdgeInsets = {-3.5, -8, -2.5, -8};
     _selectedSegmentIndex = -1;
     _interItemSpace = kSDSegmentedControlInterItemSpace;
     _stainEdgeInsets = kSDSegmentedControlStainEdgeInsets;
+    _imageSize = kSDSegmentedControlImageSize;
     __items = NSMutableArray.array;
 
     // Appearance properties
@@ -104,83 +106,51 @@ const UIEdgeInsets kSDSegmentedControlStainEdgeInsets = {-3.5, -8, -2.5, -8};
     self._selectedStainView.backgroundColor = [UIColor colorWithRed:0.816 green:0.816 blue:0.816 alpha:1];
 }
 
-- (void)insertSegmentWithImage:(UIImage *)image atIndex:(NSUInteger)segment animated:(BOOL)animated
+#pragma mark - UIKit API
+
+- (void)insertSegmentWithImage:(UIImage *)image atIndex:(NSUInteger)index animated:(BOOL)animated
 {
-    NSAssert(NO, @"insertSegmentWithImage:atIndex:animated: is not supported on SDSegmentedControl");
+    [self insertSegmentWithTitle:nil image:image atIndex:index animated:animated];
 }
 
-- (UIImage *)imageForSegmentAtIndex:(NSUInteger)segment
+- (UIImage *)imageForSegmentAtIndex:(NSUInteger)index
 {
-    NSAssert(NO, @"imageForSegmentAtIndex: is not supported on SDSegmentedControl");
-    return nil;
+    return [[self segmentAtIndex:index] imageForState:UIControlStateNormal];
 }
 
-- (void)setImage:(UIImage *)image forSegmentAtIndex:(NSUInteger)segment
+- (void)setImage:(UIImage *)image forSegmentAtIndex:(NSUInteger)index
 {
-    NSAssert(NO, @"setImage:forSegmentAtIndex: is not supported on SDSegmentedControl");
+    SDSegmentView* segmentView = [self segmentAtIndex:index];
+    [segmentView setImage:[self scaledImageWithImage:image] forState:UIControlStateNormal];
+    [segmentView sizeToFit];
+    [self setNeedsLayout];
 }
 
-- (void)setTitle:(NSString *)title forSegmentAtIndex:(NSUInteger)segment
+- (void)setTitle:(NSString *)title forSegmentAtIndex:(NSUInteger)index
 {
-    NSUInteger index = MAX(MIN(segment, self.numberOfSegments - 1), 0);
+    index = MAX(MIN(index, self.numberOfSegments - 1), 0);
     UILabel *segmentView = self._items[index];
     segmentView.text = title;
     [segmentView sizeToFit];
     [self setNeedsLayout];
 }
 
-- (NSString *)titleForSegmentAtIndex:(NSUInteger)segment
+- (NSString *)titleForSegmentAtIndex:(NSUInteger)index
 {
-    NSUInteger index = MAX(MIN(segment, self.numberOfSegments - 1), 0);
+    index = MAX(MIN(index, self.numberOfSegments - 1), 0);
     UILabel *segmentView = self._items[index];
     return segmentView.text;
 }
 
-- (void)insertSegmentWithTitle:(NSString *)title atIndex:(NSUInteger)segment animated:(BOOL)animated
+- (void)insertSegmentWithTitle:(NSString *)title atIndex:(NSUInteger)index animated:(BOOL)animated
 {
-    SDSegmentView *segmentView = SDSegmentView.new;
-    [segmentView addTarget:self action:@selector(handleSelect:) forControlEvents:UIControlEventTouchUpInside];
-    segmentView.alpha = 0;
-    [segmentView setTitle:title forState:UIControlStateNormal];
-    [segmentView sizeToFit];
-
-    NSUInteger index = MAX(MIN(segment, self.numberOfSegments), 0);
-    if (index < self._items.count)
-    {
-        segmentView.center = ((UIView *)self._items[index]).center;
-        [self insertSubview:segmentView belowSubview:self._items[index]];
-        [self._items insertObject:segmentView atIndex:index];
-    }
-    else
-    {
-        segmentView.center = self.center;
-        [self addSubview:segmentView];
-        [self._items addObject:segmentView];
-    }
-
-    if (self.selectedSegmentIndex >= index)
-    {
-        self.selectedSegmentIndex++;
-    }
-    _lastSelectedSegmentIndex = self.selectedSegmentIndex;
-
-    if (animated)
-    {
-        [UIView animateWithDuration:.4 animations:^
-        {
-            [self layoutSegments];
-        }];
-    }
-    else
-    {
-        [self setNeedsLayout];
-    }
+    [self insertSegmentWithTitle:title image:nil atIndex:index animated:animated];
 }
 
-- (void)removeSegmentAtIndex:(NSUInteger)segment animated:(BOOL)animated
+- (void)removeSegmentAtIndex:(NSUInteger)index animated:(BOOL)animated
 {
     if (self._items.count == 0) return;
-    NSUInteger index = MAX(MIN(segment, self.numberOfSegments - 1), 0);
+    index = MAX(MIN(index, self.numberOfSegments - 1), 0);
     UIView *segmentView = self._items[index];
     [self._items removeObject:segmentView];
 
@@ -261,6 +231,102 @@ const UIEdgeInsets kSDSegmentedControlStainEdgeInsets = {-3.5, -8, -2.5, -8};
     return  [self segmentAtIndex:index].enabled;
 }
 
+- (void)setSelectedSegmentIndex:(NSInteger)selectedSegmentIndex
+{
+    if (_selectedSegmentIndex != selectedSegmentIndex)
+    {
+        NSParameterAssert(selectedSegmentIndex < (NSInteger)self._items.count);
+        _lastSelectedSegmentIndex = _selectedSegmentIndex;
+        _selectedSegmentIndex = selectedSegmentIndex;
+        [self setNeedsLayout];
+    }
+}
+
+- (NSInteger)selectedSegmentIndex
+{
+    return _selectedSegmentIndex;
+}
+
+# pragma mark - Private
+
+- (UIImage *)scaledImageWithImage:(UIImage*)sourceImage
+{
+    if (!sourceImage) return nil;
+
+    const CGSize sourceSize = sourceImage.size;
+    const CGSize targetSize = self.imageSize;
+    CGSize scaledSize = targetSize;
+    CGPoint origin = CGPointZero;
+
+    if (CGSizeEqualToSize(sourceSize, targetSize) == NO)
+    {
+        CGFloat widthFactor  = targetSize.width  / sourceSize.width;
+        CGFloat heightFactor = targetSize.height / sourceSize.height;
+        CGFloat scaleFactor  = MAX(widthFactor, heightFactor);
+
+        scaledSize.width  = sourceSize.width  * scaleFactor;
+        scaledSize.height = sourceSize.height * scaleFactor;
+
+        // Center the image
+        if (widthFactor > heightFactor)
+        {
+            origin.y = (targetSize.height - scaledSize.height) / 2;
+        }
+        else if (heightFactor > widthFactor)
+        {
+            origin.x = (targetSize.width - scaledSize.width) / 2;
+        }
+    }
+
+    UIGraphicsBeginImageContext(targetSize);
+    [sourceImage drawInRect:(CGRect){origin, scaledSize}];
+    UIImage *targetImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return targetImage;
+}
+
+- (void)insertSegmentWithTitle:(NSString *)title image:(UIImage *)image atIndex:(NSUInteger)index animated:(BOOL)animated
+{
+    SDSegmentView *segmentView = SDSegmentView.new;
+    [segmentView addTarget:self action:@selector(handleSelect:) forControlEvents:UIControlEventTouchUpInside];
+    segmentView.alpha = 0;
+    [segmentView setTitle:title forState:UIControlStateNormal];
+    [segmentView setImage:[self scaledImageWithImage:image] forState:UIControlStateNormal];
+    [segmentView sizeToFit];
+
+    index = MAX(MIN(index, self.numberOfSegments), 0);
+    if (index < self._items.count)
+    {
+        segmentView.center = ((UIView *)self._items[index]).center;
+        [self insertSubview:segmentView belowSubview:self._items[index]];
+        [self._items insertObject:segmentView atIndex:index];
+    }
+    else
+    {
+        segmentView.center = self.center;
+        [self addSubview:segmentView];
+        [self._items addObject:segmentView];
+    }
+
+    if (self.selectedSegmentIndex >= index)
+    {
+        self.selectedSegmentIndex++;
+    }
+    _lastSelectedSegmentIndex = self.selectedSegmentIndex;
+
+    if (animated)
+    {
+        [UIView animateWithDuration:.4 animations:^
+         {
+             [self layoutSegments];
+         }];
+    }
+    else
+    {
+        [self setNeedsLayout];
+    }
+}
+
 - (NSInteger)firstEnabledSegmentIndexNearIndex:(NSUInteger)index
 {
     // Select the first enabled segment
@@ -306,22 +372,6 @@ const UIEdgeInsets kSDSegmentedControlStainEdgeInsets = {-3.5, -8, -2.5, -8};
 {
     _arrowSize = arrowSize;
     [self setNeedsLayout];
-}
-
-- (void)setSelectedSegmentIndex:(NSInteger)selectedSegmentIndex
-{
-    if (_selectedSegmentIndex != selectedSegmentIndex)
-    {
-        NSParameterAssert(selectedSegmentIndex < (NSInteger)self._items.count);
-        _lastSelectedSegmentIndex = _selectedSegmentIndex;
-        _selectedSegmentIndex = selectedSegmentIndex;
-        [self setNeedsLayout];
-    }
-}
-
-- (NSInteger)selectedSegmentIndex
-{
-    return _selectedSegmentIndex;
 }
 
 - (void)layoutSubviews
@@ -752,9 +802,9 @@ const UIEdgeInsets kSDSegmentedControlStainEdgeInsets = {-3.5, -8, -2.5, -8};
     segmentView.userInteractionEnabled = YES;
     segmentView.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
     segmentView.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    segmentView.titleEdgeInsets = UIEdgeInsetsMake(0, 4.0, 0, -4.0); // Space between text and image
-    segmentView.imageEdgeInsets = UIEdgeInsetsMake(0, 4.0, 0, -4.0); // Space between image and stain
-    segmentView.contentEdgeInsets = UIEdgeInsetsMake(0, 0.0, 0,  8.0); // Enlarge touchable area
+    segmentView.titleEdgeInsets = UIEdgeInsetsMake(0, 0.0, 0, -8.0); // Space between text and image
+    segmentView.imageEdgeInsets = UIEdgeInsetsMake(0, 0.0, 0, 0.0); // Space between image and stain
+    segmentView.contentEdgeInsets = UIEdgeInsetsMake(0, 0.0, 0, 8.0); // Enlarge touchable area
 
 #ifdef SDSegmentedControlDebug
     segmentView.backgroundColor            = [UIColor colorWithHue:1.00 saturation:1.0 brightness:1.0 alpha:0.5];

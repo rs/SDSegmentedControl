@@ -15,6 +15,7 @@
 @interface SDSegmentedControl : UISegmentedControl
 
 @property (assign, nonatomic) CGFloat arrowSize UI_APPEARANCE_SELECTOR;
+@property (assign, nonatomic) CGSize imageSize UI_APPEARANCE_SELECTOR;
 @property (assign, nonatomic) CFTimeInterval animationDuration UI_APPEARANCE_SELECTOR;
 @property (assign, nonatomic) CGFloat interItemSpace UI_APPEARANCE_SELECTOR;
 @property (assign, nonatomic) UIEdgeInsets stainEdgeInsets UI_APPEARANCE_SELECTOR;

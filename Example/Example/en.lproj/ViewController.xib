@@ -170,7 +170,7 @@
 						<string key="NSFrame">{{150, 230}, {150, 44}}</string>
 						<reference key="NSSuperview" ref="774585933"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="636934513"/>
+						<reference key="NSNextKeyView" ref="33959383"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -187,10 +187,33 @@
 						<reference key="IBUIFontDescription" ref="951131815"/>
 						<reference key="IBUIFont" ref="206114654"/>
 					</object>
-					<object class="IBUIButton" id="636934513">
+					<object class="IBUIButton" id="33959383">
 						<reference key="NSNextResponder" ref="774585933"/>
 						<int key="NSvFlags">292</int>
 						<string key="NSFrame">{{20, 281}, {145, 44}}</string>
+						<reference key="NSSuperview" ref="774585933"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="244195386"/>
+						<string key="NSReuseIdentifierKey">_NS:9</string>
+						<bool key="IBUIOpaque">NO</bool>
+						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+						<int key="IBUIContentHorizontalAlignment">0</int>
+						<int key="IBUIContentVerticalAlignment">0</int>
+						<int key="IBUIButtonType">1</int>
+						<string key="IBUINormalTitle">Disable Segment</string>
+						<reference key="IBUIHighlightedTitleColor" ref="934324931"/>
+						<object class="NSColor" key="IBUINormalTitleColor">
+							<int key="NSColorSpace">1</int>
+							<bytes key="NSRGB">MC4xOTYwNzg0MzQ2IDAuMzA5ODAzOTMyOSAwLjUyMTU2ODY1NgA</bytes>
+						</object>
+						<reference key="IBUINormalTitleShadowColor" ref="767529655"/>
+						<reference key="IBUIFontDescription" ref="951131815"/>
+						<reference key="IBUIFont" ref="206114654"/>
+					</object>
+					<object class="IBUIButton" id="244195386">
+						<reference key="NSNextResponder" ref="774585933"/>
+						<int key="NSvFlags">292</int>
+						<string key="NSFrame">{{170, 281}, {101, 44}}</string>
 						<reference key="NSSuperview" ref="774585933"/>
 						<reference key="NSWindow"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
@@ -199,7 +222,7 @@
 						<int key="IBUIContentHorizontalAlignment">0</int>
 						<int key="IBUIContentVerticalAlignment">0</int>
 						<int key="IBUIButtonType">1</int>
-						<string key="IBUINormalTitle">Disable Segment</string>
+						<string key="IBUINormalTitle">Add Image</string>
 						<reference key="IBUIHighlightedTitleColor" ref="934324931"/>
 						<object class="NSColor" key="IBUINormalTitleColor">
 							<int key="NSColorSpace">1</int>
@@ -296,11 +319,20 @@
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchEventConnection" key="connection">
 						<string key="label">disableSegment:</string>
-						<reference key="source" ref="636934513"/>
+						<reference key="source" ref="33959383"/>
 						<reference key="destination" ref="372490531"/>
 						<int key="IBEventType">7</int>
 					</object>
 					<int key="connectionID">51</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchEventConnection" key="connection">
+						<string key="label">addImage:</string>
+						<reference key="source" ref="244195386"/>
+						<reference key="destination" ref="372490531"/>
+						<int key="IBEventType">7</int>
+					</object>
+					<int key="connectionID">53</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -331,7 +363,8 @@
 							<reference ref="4699452"/>
 							<reference ref="237580520"/>
 							<reference ref="210301391"/>
-							<reference ref="636934513"/>
+							<reference ref="33959383"/>
+							<reference ref="244195386"/>
 						</array>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -363,7 +396,12 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">47</int>
-						<reference key="object" ref="636934513"/>
+						<reference key="object" ref="33959383"/>
+						<reference key="parent" ref="774585933"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">52</int>
+						<reference key="object" ref="244195386"/>
 						<reference key="parent" ref="774585933"/>
 					</object>
 				</array>
@@ -378,6 +416,7 @@
 				<string key="30.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="33.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="47.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<string key="52.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="6.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="8.CustomClassName">SDSegmentedControl</string>
 				<string key="8.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -387,7 +426,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">51</int>
+			<int key="maxID">53</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -403,12 +442,17 @@
 					<string key="className">ViewController</string>
 					<string key="superclassName">UIViewController</string>
 					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="addImage:">id</string>
 						<string key="addSegment:">id</string>
 						<string key="disableSegment:">id</string>
 						<string key="removeSegment:">id</string>
 						<string key="segmentDidChange:">id</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="addImage:">
+							<string key="name">addImage:</string>
+							<string key="candidateClassName">id</string>
+						</object>
 						<object class="IBActionInfo" key="addSegment:">
 							<string key="name">addSegment:</string>
 							<string key="candidateClassName">id</string>

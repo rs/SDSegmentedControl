@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5398082F164394D3003B5191 /* clock.png in Resources */ = {isa = PBXBuildFile; fileRef = 5398082E164394D3003B5191 /* clock.png */; };
 		53A2E90316135610002BE760 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53A2E90216135610002BE760 /* UIKit.framework */; };
 		53A2E90516135610002BE760 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53A2E90416135610002BE760 /* Foundation.framework */; };
 		53A2E90716135610002BE760 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53A2E90616135610002BE760 /* CoreGraphics.framework */; };
@@ -23,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5398082E164394D3003B5191 /* clock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = clock.png; sourceTree = "<group>"; };
 		53A2E8FE16135610002BE760 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53A2E90216135610002BE760 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		53A2E90416135610002BE760 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -97,6 +99,7 @@
 				53A2E91D16135610002BE760 /* ViewController.xib */,
 				53A2E9261613568D002BE760 /* SDSegmentedControl.h */,
 				53A2E9251613568D002BE760 /* SDSegmentedControl.m */,
+				5398082E164394D3003B5191 /* clock.png */,
 				53A2E90916135610002BE760 /* Supporting Files */,
 			);
 			path = Example;
@@ -172,6 +175,7 @@
 				53A2E91716135610002BE760 /* Default@2x.png in Resources */,
 				53A2E91916135610002BE760 /* Default-568h@2x.png in Resources */,
 				53A2E91F16135610002BE760 /* ViewController.xib in Resources */,
+				5398082F164394D3003B5191 /* clock.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

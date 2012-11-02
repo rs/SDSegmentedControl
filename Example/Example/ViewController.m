@@ -52,4 +52,9 @@
     [self.segmentedControl setEnabled:NO forSegmentAtIndex:self.segmentedControl.selectedSegmentIndex];
 }
 
+- (IBAction)addImage:(id)sender
+{
+    [self.segmentedControl setImage:[UIImage imageNamed:@"clock.png"] forSegmentAtIndex:self.segmentedControl.selectedSegmentIndex];
+}
+
 @end
