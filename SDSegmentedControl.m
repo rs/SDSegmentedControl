@@ -273,6 +273,20 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     return _selectedSegmentIndex;
 }
 
+- (void)setWidth:(CGFloat)width forSegmentAtIndex:(NSUInteger)index
+{
+    SDSegmentView *segmentView = [self segmentAtIndex:index];
+    CGRect frame = segmentView.frame;
+    frame.size.width = width;
+    segmentView.frame = frame;
+    [self setNeedsLayout];
+}
+
+- (CGFloat)widthForSegmentAtIndex:(NSUInteger)index
+{
+    return CGRectGetWidth([self segmentAtIndex:index].frame);
+}
+
 # pragma mark - Private
 
 - (void)insertSegmentWithTitle:(NSString *)title image:(UIImage *)image atIndex:(NSUInteger)index animated:(BOOL)animated

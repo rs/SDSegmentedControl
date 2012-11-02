@@ -15,10 +15,11 @@ A drop-in remplacement for UISegmentedControl that mimic iOS 6 AppStore tab cont
 - Appearance customization thru UIAppearance
 - UIControl events for value changes
 - Enable or disable specific segments
+- Indiviual customizable segment width
 
 ### TODO
 
-- Custom segment width
+- Shadow effect / arrows, which show that the segment control is scrollable
 
 ## Usage
 

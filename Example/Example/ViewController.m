@@ -14,10 +14,14 @@
 @end
 
 @implementation ViewController
+{
+    NSUInteger addCount;
+}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    addCount = 0;
     [self updateSelectedSegmentLabel];
 }
 
@@ -44,7 +48,27 @@
 
 - (IBAction)addSegment:(id)sender
 {
-    [self.segmentedControl insertSegmentWithTitle:@"New" atIndex:0 animated:YES];
+    switch (addCount++ % 4)
+    {
+        case 0:
+            [self.segmentedControl insertSegmentWithTitle:@"Title Only" atIndex:0 animated:YES];
+            break;
+
+        case 1:
+            [self.segmentedControl insertSegmentWithImage:[UIImage imageNamed:@"clock"] atIndex:0 animated:YES];
+            break;
+
+        case 2:
+            [self.segmentedControl insertSegmentWithTitle:@"Title with Image" atIndex:0 animated:YES];
+            [self.segmentedControl setImage:[UIImage imageNamed:@"clock"] forSegmentAtIndex:0];
+            break;
+
+        case 3:
+            [self.segmentedControl insertSegmentWithTitle:@"Custom Width" atIndex:0 animated:YES];
+            [self.segmentedControl setWidth:200.0 forSegmentAtIndex:0];
+            break;
+    }
+
     [self updateSelectedSegmentLabel];
 }
 
@@ -55,7 +79,7 @@
 
 - (IBAction)addImage:(id)sender
 {
-    [self.segmentedControl setImage:[UIImage imageNamed:@"clock.png"] forSegmentAtIndex:self.segmentedControl.selectedSegmentIndex];
+    [self.segmentedControl setImage:[UIImage imageNamed:@"clock"] forSegmentAtIndex:self.segmentedControl.selectedSegmentIndex];
 }
 
 - (IBAction)customizeTheme:(id)sender

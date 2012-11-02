@@ -4,6 +4,8 @@
 //  Contributed by Marius Rackwitz on 19/10/12
 //
 
+// #define SDSegmentedControlDebug 1
+
 #import <UIKit/UIKit.h>
 
 // Most inherited UI_APPERANCE_SELECTORs are ignored. You can use the following selectors
