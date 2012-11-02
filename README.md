@@ -26,10 +26,6 @@ Import `SDSegmentedControl.h` and `SDSegmentedControl.m` into your project and a
 
 You can then use `SDSegmentedControl` class as you would use normal `UISegmentedControl`.
 
-# Known Issues
-
-The background mask doesn't animate when resized. If someone has a solution for this, please send a pull request.
-
 # Licenses
 
 All source code is licensed under the [MIT-License](https://raw.github.com/rs/SDSegmentedControl/master/MIT-LICENSE).
