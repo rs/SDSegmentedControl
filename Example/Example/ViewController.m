@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "SDSegmentedControl.h"
 
 @interface ViewController ()
 
@@ -55,6 +56,25 @@
 - (IBAction)addImage:(id)sender
 {
     [self.segmentedControl setImage:[UIImage imageNamed:@"clock.png"] forSegmentAtIndex:self.segmentedControl.selectedSegmentIndex];
+}
+
+- (IBAction)customizeTheme:(id)sender
+{
+    SDSegmentedControl *segmentedControlAppearance = SDSegmentedControl.appearance;
+    segmentedControlAppearance.backgroundColor = UIColor.redColor;
+    segmentedControlAppearance.arrowSize = 10;
+
+    SDSegmentView *segmenteViewAppearance = SDSegmentView.appearance;
+    [segmenteViewAppearance setTitleColor:UIColor.greenColor forState:UIControlStateNormal];
+    [segmenteViewAppearance setTitleColor:UIColor.blueColor forState:UIControlStateSelected];
+    [segmenteViewAppearance setTitleColor:UIColor.yellowColor forState:UIControlStateDisabled];
+
+    SDStainView *stainViewAppearance = SDStainView.appearance;
+    stainViewAppearance.backgroundColor = UIColor.orangeColor;
+    stainViewAppearance.shadowColor = UIColor.greenColor;
+    stainViewAppearance.shadowBlur = 5;
+
+    [self presentViewController:ViewController.new animated:NO completion:nil];
 }
 
 @end

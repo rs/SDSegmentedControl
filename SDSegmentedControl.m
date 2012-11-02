@@ -85,7 +85,6 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     _selectedSegmentIndex = -1;
     _interItemSpace = kSDSegmentedControlInterItemSpace;
     _stainEdgeInsets = kSDSegmentedControlStainEdgeInsets;
-    _imageSize = kSDSegmentedControlImageSize;
     __items = NSMutableArray.array;
 
     // Appearance properties
@@ -97,7 +96,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     [self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
 
     // Init layer
-    ((CAShapeLayer *)self.layer).fillColor = [UIColor colorWithRed:0.961 green:0.961 blue:0.961 alpha:1].CGColor;
+    self.backgroundColor = [UIColor colorWithRed:0.961 green:0.961 blue:0.961 alpha:1];
     self.layer.backgroundColor = UIColor.clearColor.CGColor;
     self.layer.shadowColor = UIColor.blackColor.CGColor;
     self.layer.shadowRadius = .8;
@@ -123,6 +122,16 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     self._selectedStainView.backgroundColor = [UIColor colorWithWhite:0.816 alpha:1];
 }
 
+- (UIColor *)backgroundColor
+{
+    return [UIColor colorWithCGColor:((CAShapeLayer *)self.layer).fillColor];
+}
+
+- (void)setBackgroundColor:(UIColor *)backgroundColor
+{
+    ((CAShapeLayer *)self.layer).fillColor = backgroundColor.CGColor;
+}
+
 #pragma mark - UIKit API
 
 - (void)insertSegmentWithImage:(UIImage *)image atIndex:(NSUInteger)index animated:(BOOL)animated
@@ -138,7 +147,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 - (void)setImage:(UIImage *)image forSegmentAtIndex:(NSUInteger)index
 {
     SDSegmentView* segmentView = [self segmentAtIndex:index];
-    [segmentView setImage:[self scaledImageWithImage:image] forState:UIControlStateNormal];
+    [segmentView setImage:image forState:UIControlStateNormal];
     [segmentView sizeToFit];
     [self setNeedsLayout];
 }
@@ -266,49 +275,13 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 
 # pragma mark - Private
 
-- (UIImage *)scaledImageWithImage:(UIImage*)sourceImage
-{
-    if (!sourceImage) return nil;
-
-    const CGSize sourceSize = sourceImage.size;
-    const CGSize targetSize = self.imageSize;
-    CGSize scaledSize = targetSize;
-    CGPoint origin = CGPointZero;
-
-    if (CGSizeEqualToSize(sourceSize, targetSize) == NO)
-    {
-        CGFloat widthFactor  = targetSize.width  / sourceSize.width;
-        CGFloat heightFactor = targetSize.height / sourceSize.height;
-        CGFloat scaleFactor  = MAX(widthFactor, heightFactor);
-
-        scaledSize.width  = sourceSize.width  * scaleFactor;
-        scaledSize.height = sourceSize.height * scaleFactor;
-
-        // Center the image
-        if (widthFactor > heightFactor)
-        {
-            origin.y = (targetSize.height - scaledSize.height) / 2;
-        }
-        else if (heightFactor > widthFactor)
-        {
-            origin.x = (targetSize.width - scaledSize.width) / 2;
-        }
-    }
-
-    UIGraphicsBeginImageContext(targetSize);
-    [sourceImage drawInRect:(CGRect){origin, scaledSize}];
-    UIImage *targetImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return targetImage;
-}
-
 - (void)insertSegmentWithTitle:(NSString *)title image:(UIImage *)image atIndex:(NSUInteger)index animated:(BOOL)animated
 {
     SDSegmentView *segmentView = SDSegmentView.new;
     [segmentView addTarget:self action:@selector(handleSelect:) forControlEvents:UIControlEventTouchUpInside];
     segmentView.alpha = 0;
     [segmentView setTitle:title forState:UIControlStateNormal];
-    [segmentView setImage:[self scaledImageWithImage:image] forState:UIControlStateNormal];
+    [segmentView setImage:image forState:UIControlStateNormal];
     [segmentView sizeToFit];
 
     index = MAX(MIN(index, self.numberOfSegments), 0);
@@ -881,39 +854,94 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 
 @implementation SDSegmentView
 
++ (void)initialize
+{
+    [super initialize];
+
+    SDSegmentView *appearance = [self appearance];
+    [appearance setTitleColor:[UIColor colorWithWhite:0.392 alpha:1] forState:UIControlStateNormal];
+    [appearance setTitleShadowColor:UIColor.whiteColor forState:UIControlStateNormal];
+
+    [appearance setTitleColor:[UIColor colorWithWhite:0.235 alpha:1] forState:UIControlStateSelected];
+    [appearance setTitleShadowColor:UIColor.whiteColor forState:UIControlStateSelected];
+
+    [appearance setTitleColor:[UIColor colorWithWhite:0.800 alpha:1] forState:UIControlStateDisabled];
+    [appearance setTitleShadowColor:UIColor.clearColor forState:UIControlStateDisabled];
+
+}
+
 + (SDSegmentView *)new
 {
-    SDSegmentView *segmentView = [self.class buttonWithType:UIButtonTypeCustom];
-    segmentView.titleLabel.shadowOffset = CGSizeMake(0, 0.5);
-    segmentView.titleLabel.font = [UIFont boldSystemFontOfSize:14];
-    segmentView.userInteractionEnabled = YES;
-    segmentView.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
-    segmentView.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    segmentView.titleEdgeInsets = UIEdgeInsetsMake(0, 0.0, 0, -8.0); // Space between text and image
-    segmentView.imageEdgeInsets = UIEdgeInsetsMake(0, 0.0, 0, 0.0); // Space between image and stain
-    segmentView.contentEdgeInsets = UIEdgeInsetsMake(0, 0.0, 0, 8.0); // Enlarge touchable area
-
-#ifdef SDSegmentedControlDebug
-    segmentView.backgroundColor            = [UIColor colorWithHue:1.00 saturation:1.0 brightness:1.0 alpha:0.5];
-    segmentView.imageView.backgroundColor  = [UIColor colorWithHue:0.66 saturation:1.0 brightness:1.0 alpha:0.5];
-    segmentView.titleLabel.backgroundColor = [UIColor colorWithHue:0.33 saturation:1.0 brightness:1.0 alpha:0.5];
-#endif
-
-    [segmentView setTitleColor:[UIColor colorWithWhite:0.392 alpha:1] forState:UIControlStateNormal];
-    [segmentView setTitleShadowColor:UIColor.whiteColor forState:UIControlStateNormal];
-
-    [segmentView setTitleColor:[UIColor colorWithWhite:0.235 alpha:1] forState:UIControlStateSelected];
-    [segmentView setTitleShadowColor:UIColor.whiteColor forState:UIControlStateSelected];
-
-    [segmentView setTitleColor:[UIColor colorWithWhite:0.800 alpha:1] forState:UIControlStateDisabled];
-    [segmentView setTitleShadowColor:UIColor.clearColor forState:UIControlStateDisabled];
-
-    return segmentView;
+    return [self.class buttonWithType:UIButtonTypeCustom];
 }
 
 + (id)appearance
 {
     return [self appearanceWhenContainedIn:SDSegmentedControl.class, nil];
+}
+
+- (id)initWithFrame:(CGRect)frame
+{
+    if ((self = [super initWithFrame:frame]))
+    {
+        _imageSize = kSDSegmentedControlImageSize;
+        self.titleLabel.shadowOffset = CGSizeMake(0, 0.5);
+        self.titleLabel.font = [UIFont boldSystemFontOfSize:14];
+        self.userInteractionEnabled = YES;
+        self.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+        self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+        self.titleEdgeInsets = UIEdgeInsetsMake(0, 0.0, 0, -8.0); // Space between text and image
+        self.imageEdgeInsets = UIEdgeInsetsMake(0, 0.0, 0, 0.0); // Space between image and stain
+        self.contentEdgeInsets = UIEdgeInsetsMake(0, 0.0, 0, 8.0); // Enlarge touchable area
+
+#ifdef SDSegmentedControlDebug
+        self.backgroundColor = [UIColor colorWithHue:1.00 saturation:1.0 brightness:1.0 alpha:0.5];
+        self.imageView.backgroundColor = [UIColor colorWithHue:0.66 saturation:1.0 brightness:1.0 alpha:0.5];
+        self.titleLabel.backgroundColor = [UIColor colorWithHue:0.33 saturation:1.0 brightness:1.0 alpha:0.5];
+#endif
+    }
+    return self;
+}
+
+- (void)setImage:(UIImage *)image forState:(UIControlState)state
+{
+    [super setImage:[self scaledImageWithImage:image] forState:state];
+}
+
+- (UIImage *)scaledImageWithImage:(UIImage*)sourceImage
+{
+    if (!sourceImage) return nil;
+
+    const CGSize sourceSize = sourceImage.size;
+    const CGSize targetSize = self.imageSize;
+    CGSize scaledSize = targetSize;
+    CGPoint origin = CGPointZero;
+
+    if (CGSizeEqualToSize(sourceSize, targetSize) == NO)
+    {
+        CGFloat widthFactor  = targetSize.width  / sourceSize.width;
+        CGFloat heightFactor = targetSize.height / sourceSize.height;
+        CGFloat scaleFactor  = MAX(widthFactor, heightFactor);
+
+        scaledSize.width  = sourceSize.width  * scaleFactor;
+        scaledSize.height = sourceSize.height * scaleFactor;
+
+        // Center the image
+        if (widthFactor > heightFactor)
+        {
+            origin.y = (targetSize.height - scaledSize.height) / 2;
+        }
+        else if (heightFactor > widthFactor)
+        {
+            origin.x = (targetSize.width - scaledSize.width) / 2;
+        }
+    }
+
+    UIGraphicsBeginImageContext(targetSize);
+    [sourceImage drawInRect:(CGRect){origin, scaledSize}];
+    UIImage *targetImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return targetImage;
 }
 
 - (CGRect)innerFrame
@@ -949,6 +977,16 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 
 @implementation SDStainView
 
++ (void)initialize
+{
+    [super initialize];
+    SDStainView *appearance = [self appearance];
+    appearance.edgeInsets = UIEdgeInsetsMake(-.5, -.5, -.5, -.5);
+    appearance.shadowOffset = CGSizeMake(0, .5);
+    appearance.shadowBlur = 2.5;
+    appearance.shadowColor = UIColor.blackColor;
+}
+
 + (id)appearance
 {
     return [self appearanceWhenContainedIn:SDSegmentedControl.class, nil];
@@ -959,11 +997,6 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     if ((self = [super init]))
     {
         self.clipsToBounds = YES;
-
-        _edgeInsets = UIEdgeInsetsMake(-.5, -.5, -.5, -.5);
-        _shadowOffset = CGSizeMake(0, .5);
-        _shadowBlur = 2.5;
-        _shadowColor = UIColor.blackColor;
     }
     return self;
 }

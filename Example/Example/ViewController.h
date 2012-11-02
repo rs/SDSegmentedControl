@@ -17,5 +17,6 @@
 - (IBAction)addSegment:(id)sender;
 - (IBAction)disableSegment:(id)sender;
 - (IBAction)addImage:(id)sender;
+- (IBAction)customizeTheme:(id)sender;
 
 @end
