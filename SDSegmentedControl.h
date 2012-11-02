@@ -8,5 +8,7 @@
 @interface SDSegmentedControl : UISegmentedControl
 
 @property (assign, nonatomic) CGFloat arrowSize;
+@property (assign, nonatomic) CFTimeInterval animationDuration;
+
 
 @end
