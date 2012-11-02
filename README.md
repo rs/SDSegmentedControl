@@ -12,6 +12,7 @@ controls.
   its class SDSegmentedControl)
 - Animated segment selection
 - Content aware dynamic segment width
+- Scrollable if there are too many segments for width
 - Animated segment selection, with animated arrow
 - Appearance customization thru UIAppearance
 - UIControl events for value changes

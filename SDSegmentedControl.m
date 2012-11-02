@@ -12,9 +12,17 @@
 const NSTimeInterval kSDSegmentedControlDefaultDuration = 0.2;
 const CGFloat kSDSegmentedControlArrowSize = 6.5;
 const CGFloat kSDSegmentedControlInterItemSpace = 30.0;
-const UIEdgeInsets kSDSegmentedControlStainEdgeInsets = {-3.5, -8, -2.5, -8};
+const UIEdgeInsets kSDSegmentedControlStainEdgeInsets = {-3.5, -16, -2.5, -16};
 const CGSize kSDSegmentedControlImageSize = {18, 18};
 
+const CGFloat kSDSegmentedControlScrollOffset = 20;
+
+
+@interface SDSegmentView (Private)
+
+- (CGRect)innerFrame;
+
+@end
 
 @interface SDSegmentedControl ()
 
@@ -27,7 +35,9 @@ const CGSize kSDSegmentedControlImageSize = {18, 18};
 {
     NSInteger _selectedSegmentIndex;
     NSInteger _lastSelectedSegmentIndex;
+    UIScrollView *_scrollView;
     CAShapeLayer *_borderBottomLayer;
+    BOOL _isScrollingBySelection;
     void (^lastCompletionBlock)();
 }
 
@@ -95,15 +105,22 @@ const CGSize kSDSegmentedControlImageSize = {18, 18};
     self.layer.shadowOffset = CGSizeMake(0, 1);
 
     // Init border bottom layer
-    _borderBottomLayer = [CAShapeLayer layer];
+    [self.layer addSublayer:_borderBottomLayer = CAShapeLayer.layer];
     _borderBottomLayer.strokeColor = UIColor.whiteColor.CGColor;
     _borderBottomLayer.lineWidth = .5;
     _borderBottomLayer.fillColor = nil;
     [self.layer addSublayer:_borderBottomLayer];
 
+    // Init scrollView
+    [self addSubview:_scrollView = UIScrollView.new];
+    _scrollView.delegate = self;
+    _scrollView.backgroundColor = UIColor.clearColor;
+    _scrollView.showsHorizontalScrollIndicator = NO;
+    _scrollView.showsVerticalScrollIndicator = NO;
 
-    [self addSubview:self._selectedStainView = SDStainView.new];
-    self._selectedStainView.backgroundColor = [UIColor colorWithRed:0.816 green:0.816 blue:0.816 alpha:1];
+    // Init stain view
+    [_scrollView addSubview:self._selectedStainView = SDStainView.new];
+    self._selectedStainView.backgroundColor = [UIColor colorWithWhite:0.816 alpha:1];
 }
 
 #pragma mark - UIKit API
@@ -298,13 +315,13 @@ const CGSize kSDSegmentedControlImageSize = {18, 18};
     if (index < self._items.count)
     {
         segmentView.center = ((UIView *)self._items[index]).center;
-        [self insertSubview:segmentView belowSubview:self._items[index]];
+        [_scrollView insertSubview:segmentView belowSubview:self._items[index]];
         [self._items insertObject:segmentView atIndex:index];
     }
     else
     {
         segmentView.center = self.center;
-        [self addSubview:segmentView];
+        [_scrollView addSubview:segmentView];
         [self._items addObject:segmentView];
     }
 
@@ -376,53 +393,105 @@ const CGSize kSDSegmentedControlImageSize = {18, 18};
 
 - (void)layoutSubviews
 {
+    _scrollView.frame = self.bounds;
     [self layoutSegments];
 }
 
 - (void)layoutSegments
 {
     CGFloat totalItemWidth = 0;
-    for (UIView *item in self._items)
+    for (SDSegmentView *item in self._items)
     {
         totalItemWidth += CGRectGetWidth(item.bounds);
     }
 
-    CGFloat spaceLeft = CGRectGetWidth(self.bounds) - (totalItemWidth + (self.interItemSpace * (self.numberOfSegments - 1)));
-    CGFloat itemsVAlignCenter = ((CGRectGetHeight(self.bounds) - self.arrowSize / 2) / 2) + 1;
+    CGFloat totalWidth = (totalItemWidth + (self.interItemSpace * (self.numberOfSegments - 1)));
 
-    __block CGFloat pos = spaceLeft / 2;
-    [self._items enumerateObjectsUsingBlock:^(UIView *item, NSUInteger idx, BOOL *stop)
+    // Apply total to scrollView
+    __block CGFloat currentItemPosition = 0;
+    CGSize contentSize = _scrollView.contentSize;
+    if (totalWidth > self.bounds.size.width)
+    {
+        // We must scroll, so add an offset
+        totalWidth += 2 * kSDSegmentedControlScrollOffset;
+        currentItemPosition += kSDSegmentedControlScrollOffset;
+        contentSize.width = totalWidth;
+    }
+    else
+    {
+        contentSize.width = CGRectGetWidth(self.bounds);
+    }
+    contentSize.height = self.bounds.size.height;
+    _scrollView.contentSize = contentSize;
+
+    // Center all items horizontally and each item vertically
+    CGFloat spaceLeft = _scrollView.contentSize.width - totalWidth;
+    CGFloat itemHeight = _scrollView.contentSize.height - self.arrowSize / 2;
+
+    currentItemPosition += spaceLeft / 2;
+    [self._items enumerateObjectsUsingBlock:^(SDSegmentView *item, NSUInteger idx, BOOL *stop)
     {
         item.alpha = 1;
-        if (self.selectedSegmentIndex == idx)
-        {
-            [item sizeToFit];
-            item.center = CGPointMake(pos + CGRectGetWidth(item.bounds) / 2, itemsVAlignCenter);
-        }
-        else
-        {
-            item.frame = CGRectMake(pos, 0, CGRectGetWidth(item.bounds), itemsVAlignCenter * 2);
-        }
-        pos += CGRectGetWidth(item.bounds) + self.interItemSpace;
+        item.frame = CGRectMake(currentItemPosition, 0, CGRectGetWidth(item.bounds), itemHeight);
+        currentItemPosition += CGRectGetWidth(item.bounds) + self.interItemSpace;
     }];
-    for (UIView *item in self._items)
-    {
-    }
 
+    // Layout stain view and update items
     BOOL animated = self.animationDuration && !CGRectEqualToRect(self._selectedStainView.frame, CGRectZero);
-    CGFloat position;
+    BOOL isScrollingSinceNow = NO;
+    CGFloat selectedItemCenterPosition;
 
     if (self.selectedSegmentIndex == -1)
     {
         self._selectedStainView.hidden = YES;
-        position = CGFLOAT_MAX;
+        selectedItemCenterPosition = CGFLOAT_MAX;
+        for (SDSegmentView *item in self._items)
+        {
+            item.selected = NO;
+        }
     }
     else
     {
-        UIView *selectedItem = self._items[self.selectedSegmentIndex];
-        position = selectedItem.center.x;
-        CGRect stainFrame = UIEdgeInsetsInsetRect(selectedItem.frame, self.stainEdgeInsets);
-        self._selectedStainView.layer.cornerRadius = stainFrame.size.height / 2;
+        SDSegmentView *selectedItem = self._items[self.selectedSegmentIndex];
+        selectedItemCenterPosition = selectedItem.center.x;
+
+        CGRect stainFrame = UIEdgeInsetsInsetRect(selectedItem.innerFrame, self.stainEdgeInsets);
+        self._selectedStainView.layer.cornerRadius = CGRectGetHeight(stainFrame) / 2;
+        self._selectedStainView.hidden = NO;
+        stainFrame.origin.x = selectedItemCenterPosition - CGRectGetWidth(stainFrame) / 2;
+        selectedItemCenterPosition -= _scrollView.contentOffset.x;
+
+        if (_scrollView.contentSize.width > _scrollView.bounds.size.width)
+        {
+            CGRect scrollRect = {_scrollView.contentOffset, _scrollView.bounds.size};
+            CGRect targetRect = CGRectInset(stainFrame, -kSDSegmentedControlScrollOffset / 2, 0);
+
+            if (!CGRectContainsRect(scrollRect, targetRect))
+            {
+                // Adjust position
+                CGFloat posOffset = 0;
+                if (CGRectGetMinX(targetRect) < CGRectGetMinX(scrollRect))
+                {
+                    posOffset += CGRectGetMinX(scrollRect) - CGRectGetMinX(targetRect);
+                }
+                else if (CGRectGetMaxX(targetRect) > CGRectGetMaxX(scrollRect))
+                {
+                    posOffset -= CGRectGetMaxX(targetRect) - CGRectGetMaxX(scrollRect);
+                }
+
+                // Recenter arrow with posOffset
+                selectedItemCenterPosition += posOffset;
+
+                // Temporary disable updates, if scrolling is needed, because scrollView will cause a
+                // lot of relayouts. The field isScrollBySelection will be reseted by scrollView's delegate
+                // call to scrollViewDidEndScrollingAnimation and can't be resetted after called, because
+                // the animation is dispatched asynchronously, naturally.
+                _isScrollingBySelection = animated;
+                isScrollingSinceNow = YES;
+                [_scrollView scrollRectToVisible:targetRect animated:animated];
+            }
+        }
+
         UIView.animationsEnabled = animated;
         [UIView animateWithDuration:animated ? self.animationDuration : 0 animations:^
         {
@@ -438,16 +507,19 @@ const CGSize kSDSegmentedControlImageSize = {18, 18};
         UIView.animationsEnabled = YES;
     }
 
-    // Animate from a custom oldPosition if needed
-    CGFloat oldPosition = CGFLOAT_MAX;
-    if (animated && _lastSelectedSegmentIndex != self.selectedSegmentIndex && _lastSelectedSegmentIndex >= 0 && _lastSelectedSegmentIndex < self._items.count)
+    // Don't relayout paths while scrolling
+    if (!_isScrollingBySelection || isScrollingSinceNow)
     {
-        SDSegmentView *lastSegmentView = [self._items objectAtIndex:_lastSelectedSegmentIndex];
-        oldPosition = lastSegmentView.center.x;
+        // Animate from a custom oldPosition if needed
+        CGFloat oldPosition = CGFLOAT_MAX;
+        if (animated && _lastSelectedSegmentIndex != self.selectedSegmentIndex && _lastSelectedSegmentIndex >= 0 && _lastSelectedSegmentIndex < self._items.count)
+        {
+            SDSegmentView *lastSegmentView = [self._items objectAtIndex:_lastSelectedSegmentIndex];
+            oldPosition = lastSegmentView.center.x - _scrollView.contentOffset.x;
+        }
+
+        [self drawPathsFromPosition:oldPosition toPosition:selectedItemCenterPosition animationDuration:animated ? self.animationDuration : 0];
     }
-
-    [self drawPathsFromPosition:oldPosition toPosition:position animationDuration:animated ? self.animationDuration : 0];
-
 }
 
 #pragma mark - Draw paths
@@ -789,6 +861,21 @@ const CGSize kSDSegmentedControlImageSize = {18, 18};
     }
 }
 
+#pragma mark - ScrollViewDelegate
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if (_isScrollingBySelection) return;
+    CGFloat selectedItemCenterPosition = ((SDSegmentView *)self._items[self.selectedSegmentIndex]).center.x;
+    [self drawPathsToPosition:selectedItemCenterPosition - scrollView.contentOffset.x animated:NO];
+    self._selectedStainView.center = CGPointMake(selectedItemCenterPosition, self._selectedStainView.center.y);
+}
+
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+{
+    _isScrollingBySelection = NO;
+}
+
 @end
 
 
@@ -827,6 +914,34 @@ const CGSize kSDSegmentedControlImageSize = {18, 18};
 + (id)appearance
 {
     return [self appearanceWhenContainedIn:SDSegmentedControl.class, nil];
+}
+
+- (CGRect)innerFrame
+{
+    const CGPoint origin = self.frame.origin;
+    CGRect innerFrame = CGRectOffset(self.titleLabel.frame, origin.x, origin.y);
+
+    if (innerFrame.size.width > 0)
+    {
+        innerFrame.size.width = self.titleEdgeInsets.left + self.titleLabel.frame.size.width + self.titleEdgeInsets.right;
+    }
+
+    if ([self imageForState:self.state])
+    {
+        const CGRect imageViewFrame = self.imageView.frame;
+        if (innerFrame.size.height > 0)
+        {
+            innerFrame.origin.y -= (imageViewFrame.size.height - innerFrame.size.height) / 2;
+        }
+        else
+        {
+            innerFrame.origin.y = imageViewFrame.origin.y;
+        }
+        innerFrame.size.height = imageViewFrame.size.height;
+        innerFrame.size.width += self.imageEdgeInsets.left + imageViewFrame.size.width + self.imageEdgeInsets.right;
+    }
+
+    return innerFrame;
 }
 
 @end

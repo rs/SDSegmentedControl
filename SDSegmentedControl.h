@@ -12,7 +12,7 @@
 //  +[SDSegmentView appearance]
 //  +[SDStainView appearance]
 
-@interface SDSegmentedControl : UISegmentedControl
+@interface SDSegmentedControl : UISegmentedControl <UIScrollViewDelegate>
 
 @property (assign, nonatomic) CGFloat arrowSize UI_APPEARANCE_SELECTOR;
 @property (assign, nonatomic) CGSize imageSize UI_APPEARANCE_SELECTOR;
