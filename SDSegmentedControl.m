@@ -182,6 +182,7 @@ const UIEdgeInsets kSDSegmentedControlStainEdgeInsets = {-3.5, -8, -2.5, -8};
     if (self._items.count == 0) return;
     NSUInteger index = MAX(MIN(segment, self.numberOfSegments - 1), 0);
     UIView *segmentView = self._items[index];
+    [self._items removeObject:segmentView];
 
     if (self.selectedSegmentIndex >= 0)
     {
@@ -197,10 +198,11 @@ const UIEdgeInsets kSDSegmentedControlStainEdgeInsets = {-3.5, -8, -2.5, -8};
         {
             // Inform that the old value doesn't exist anymore
             changed = YES;
+            self.selectedSegmentIndex = [self firstEnabledSegmentIndexNearIndex:self.selectedSegmentIndex];
         }
         else if (self.selectedSegmentIndex > index)
         {
-            self.selectedSegmentIndex--;
+            self.selectedSegmentIndex = [self firstEnabledSegmentIndexNearIndex:self.selectedSegmentIndex - 1];
         }
 
         // It is important to set both, this will fix the animation.
@@ -214,7 +216,6 @@ const UIEdgeInsets kSDSegmentedControlStainEdgeInsets = {-3.5, -8, -2.5, -8};
 
     if (animated)
     {
-        [self._items removeObject:segmentView];
         [UIView animateWithDuration:.4 animations:^
         {
             segmentView.alpha = 0;
@@ -228,7 +229,6 @@ const UIEdgeInsets kSDSegmentedControlStainEdgeInsets = {-3.5, -8, -2.5, -8};
     else
     {
         [segmentView removeFromSuperview];
-        [self._items removeObject:segmentView];
         [self setNeedsLayout];
     }
 }
@@ -246,6 +246,48 @@ const UIEdgeInsets kSDSegmentedControlStainEdgeInsets = {-3.5, -8, -2.5, -8};
     return self._items.count;
 }
 
+- (void)setEnabled:(BOOL)enabled forSegmentAtIndex:(NSUInteger)index
+{
+    [self segmentAtIndex:index].enabled = enabled;
+
+    if (index == self.selectedSegmentIndex)
+    {
+        self.selectedSegmentIndex = [self firstEnabledSegmentIndexNearIndex:index];
+    }
+}
+
+- (BOOL)isEnabledForSegmentAtIndex:(NSUInteger)index
+{
+    return  [self segmentAtIndex:index].enabled;
+}
+
+- (NSInteger)firstEnabledSegmentIndexNearIndex:(NSUInteger)index
+{
+    // Select the first enabled segment
+    for (int i = index; i < self._items.count; i++)
+    {
+        if (((SDSegmentView *)self._items[i]).enabled)
+        {
+            return i;
+        }
+    }
+
+    for (int i = index; i >= 0; i--)
+    {
+        if (((SDSegmentView *)self._items[i]).enabled)
+        {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+- (SDSegmentView *)segmentAtIndex:(NSUInteger)index
+{
+    NSParameterAssert(index >= 0 && index < self._items.count);
+    return self._items[index];
+}
 
 - (void)willMoveToSuperview:(UIView *)newSuperview
 {
@@ -726,8 +768,8 @@ const UIEdgeInsets kSDSegmentedControlStainEdgeInsets = {-3.5, -8, -2.5, -8};
     [segmentView setTitleColor:[UIColor colorWithWhite:0.235 alpha:1] forState:UIControlStateSelected];
     [segmentView setTitleShadowColor:UIColor.whiteColor forState:UIControlStateSelected];
 
-    [segmentView setTitleColor:[UIColor colorWithWhite:0.500 alpha:1] forState:UIControlStateDisabled];
-    [segmentView setTitleShadowColor:UIColor.darkGrayColor forState:UIControlStateDisabled];
+    [segmentView setTitleColor:[UIColor colorWithWhite:0.800 alpha:1] forState:UIControlStateDisabled];
+    [segmentView setTitleShadowColor:UIColor.clearColor forState:UIControlStateDisabled];
 
     return segmentView;
 }
