@@ -699,11 +699,10 @@ const CGFloat kSDSegmentedControlArrowSize = 6.5;
     }
 }
 
-
 - (void)handleSelect:(UIGestureRecognizer *)gestureRecognizer
 {
     NSUInteger index = [self._items indexOfObject:gestureRecognizer.view];
-    if (index != NSNotFound)
+    if (index != NSNotFound && index != self.selectedSegmentIndex)
     {
         self.selectedSegmentIndex = index;
         [self setNeedsLayout];
