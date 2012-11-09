@@ -113,6 +113,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     // Init scrollView
     [self addSubview:_scrollView = UIScrollView.new];
     _scrollView.delegate = self;
+    _scrollView.scrollsToTop = NO;
     _scrollView.backgroundColor = UIColor.clearColor;
     _scrollView.showsHorizontalScrollIndicator = NO;
     _scrollView.showsVerticalScrollIndicator = NO;
@@ -155,8 +156,8 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 - (void)setTitle:(NSString *)title forSegmentAtIndex:(NSUInteger)index
 {
     index = MAX(MIN(index, self.numberOfSegments - 1), 0);
-    UILabel *segmentView = self._items[index];
-    segmentView.text = title;
+    UIButton *segmentView = self._items[index];
+    [segmentView setTitle:title forState:UIControlStateNormal];
     [segmentView sizeToFit];
     [self setNeedsLayout];
 }
@@ -164,8 +165,8 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 - (NSString *)titleForSegmentAtIndex:(NSUInteger)index
 {
     index = MAX(MIN(index, self.numberOfSegments - 1), 0);
-    UILabel *segmentView = self._items[index];
-    return segmentView.text;
+    UIButton *segmentView = self._items[index];
+    return [segmentView titleForState:UIControlStateNormal];
 }
 
 - (void)insertSegmentWithTitle:(NSString *)title atIndex:(NSUInteger)index animated:(BOOL)animated
