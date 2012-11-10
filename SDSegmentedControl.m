@@ -923,40 +923,24 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     [super setImage:[self scaledImageWithImage:image] forState:state];
 }
 
-- (UIImage *)scaledImageWithImage:(UIImage*)sourceImage
+- (UIImage *)scaledImageWithImage:(UIImage*)image
 {
-    if (!sourceImage) return nil;
+    if (!image) return nil;
 
-    const CGSize sourceSize = sourceImage.size;
-    const CGSize targetSize = self.imageSize;
-    CGSize scaledSize = targetSize;
-    CGPoint origin = CGPointZero;
-
-    if (CGSizeEqualToSize(sourceSize, targetSize) == NO)
+    if (!CGSizeEqualToSize(image.size, self.imageSize))
     {
-        CGFloat widthFactor  = targetSize.width  / sourceSize.width;
-        CGFloat heightFactor = targetSize.height / sourceSize.height;
-        CGFloat scaleFactor  = MAX(widthFactor, heightFactor);
+        UIImageView *imageView = [UIImageView.alloc initWithFrame:CGRectMake(0, 0, self.imageSize.width, self.imageSize.height)];
+        imageView.contentMode = UIViewContentModeScaleAspectFit;
+        imageView.image = image;
 
-        scaledSize.width  = sourceSize.width  * scaleFactor;
-        scaledSize.height = sourceSize.height * scaleFactor;
-
-        // Center the image
-        if (widthFactor > heightFactor)
-        {
-            origin.y = (targetSize.height - scaledSize.height) / 2;
-        }
-        else if (heightFactor > widthFactor)
-        {
-            origin.x = (targetSize.width - scaledSize.width) / 2;
-        }
+        UIGraphicsBeginImageContextWithOptions(imageView.bounds.size, NO, 0.0);
+        [imageView.layer renderInContext:UIGraphicsGetCurrentContext()];
+        image = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
     }
 
-    UIGraphicsBeginImageContext(targetSize);
-    [sourceImage drawInRect:(CGRect){origin, scaledSize}];
-    UIImage *targetImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return targetImage;
+	return image;
+
 }
 
 - (CGRect)innerFrame
