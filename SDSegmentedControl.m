@@ -12,7 +12,7 @@
 const NSTimeInterval kSDSegmentedControlDefaultDuration = 0.2;
 const CGFloat kSDSegmentedControlArrowSize = 6.5;
 const CGFloat kSDSegmentedControlInterItemSpace = 30.0;
-const UIEdgeInsets kSDSegmentedControlStainEdgeInsets = {-3.5, -16, -2.5, -16};
+const UIEdgeInsets kSDSegmentedControlStainEdgeInsets = {-2, -16, -4, -16};
 const CGSize kSDSegmentedControlImageSize = {18, 18};
 
 const CGFloat kSDSegmentedControlScrollOffset = 20;
@@ -80,6 +80,11 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 
 - (void)commonInit
 {
+    // Default height
+    CGRect frame = self.frame;
+    frame.size.height = 43;
+    self.frame = frame;
+
     // Init properties
     _lastSelectedSegmentIndex = -1;
     _selectedSegmentIndex = -1;
@@ -414,7 +419,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 
     // Center all items horizontally and each item vertically
     CGFloat spaceLeft = _scrollView.contentSize.width - totalWidth;
-    CGFloat itemHeight = _scrollView.contentSize.height - self.arrowSize / 2;
+    CGFloat itemHeight = _scrollView.contentSize.height - self.arrowSize / 2 + .5;
 
     currentItemPosition += spaceLeft / 2;
     [self._items enumerateObjectsUsingBlock:^(SDSegmentView *item, NSUInteger idx, BOOL *stop)
@@ -1017,6 +1022,12 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     CGContextAddPath(context, roundedRect);
     CGContextSetShadowWithColor(UIGraphicsGetCurrentContext(), self.shadowOffset, self.shadowBlur, self.shadowColor.CGColor);
     CGContextSetStrokeColorWithColor(context, self.backgroundColor.CGColor);
+    CGContextStrokePath(context);
+
+    CGContextTranslateCTM(context, 0, -1);
+    CGContextAddPath(context, roundedRect);
+    CGContextSetLineWidth(context, 1.5);
+    CGContextSetStrokeColorWithColor(context, UIColor.whiteColor.CGColor);
     CGContextStrokePath(context);
 }
 
