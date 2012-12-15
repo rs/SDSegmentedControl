@@ -35,7 +35,6 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 {
     NSInteger _selectedSegmentIndex;
     NSInteger _lastSelectedSegmentIndex;
-    UIScrollView *_scrollView;
     CAShapeLayer *_borderBottomLayer;
     BOOL _isScrollingBySelection;
     void (^lastCompletionBlock)();
@@ -308,13 +307,13 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     if (index < self._items.count)
     {
         segmentView.center = ((UIView *)self._items[index]).center;
-        [_scrollView insertSubview:segmentView belowSubview:self._items[index]];
+        [self.scrollView insertSubview:segmentView belowSubview:self._items[index]];
         [self._items insertObject:segmentView atIndex:index];
     }
     else
     {
         segmentView.center = self.center;
-        [_scrollView addSubview:segmentView];
+        [self.scrollView addSubview:segmentView];
         [self._items addObject:segmentView];
     }
 
@@ -386,7 +385,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 
 - (void)layoutSubviews
 {
-    _scrollView.frame = self.bounds;
+    self.scrollView.frame = self.bounds;
     [self layoutSegments];
 }
 
@@ -402,7 +401,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 
     // Apply total to scrollView
     __block CGFloat currentItemPosition = 0;
-    CGSize contentSize = _scrollView.contentSize;
+    CGSize contentSize = self.scrollView.contentSize;
     if (totalWidth > self.bounds.size.width)
     {
         // We must scroll, so add an offset
@@ -415,11 +414,11 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
         contentSize.width = CGRectGetWidth(self.bounds);
     }
     contentSize.height = self.bounds.size.height;
-    _scrollView.contentSize = contentSize;
+    self.scrollView.contentSize = contentSize;
 
     // Center all items horizontally and each item vertically
-    CGFloat spaceLeft = _scrollView.contentSize.width - totalWidth;
-    CGFloat itemHeight = _scrollView.contentSize.height - self.arrowSize / 2 + .5;
+    CGFloat spaceLeft = self.scrollView.contentSize.width - totalWidth;
+    CGFloat itemHeight = self.scrollView.contentSize.height - self.arrowSize / 2 + .5;
 
     currentItemPosition += spaceLeft / 2;
     [self._items enumerateObjectsUsingBlock:^(SDSegmentView *item, NSUInteger idx, BOOL *stop)
@@ -452,11 +451,11 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
         self._selectedStainView.layer.cornerRadius = CGRectGetHeight(stainFrame) / 2;
         self._selectedStainView.hidden = NO;
         stainFrame.origin.x = selectedItemCenterPosition - CGRectGetWidth(stainFrame) / 2;
-        selectedItemCenterPosition -= _scrollView.contentOffset.x;
+        selectedItemCenterPosition -= self.scrollView.contentOffset.x;
 
-        if (_scrollView.contentSize.width > _scrollView.bounds.size.width)
+        if (self.scrollView.contentSize.width > self.scrollView.bounds.size.width)
         {
-            CGRect scrollRect = {_scrollView.contentOffset, _scrollView.bounds.size};
+            CGRect scrollRect = {self.scrollView.contentOffset, self.scrollView.bounds.size};
             CGRect targetRect = CGRectInset(stainFrame, -kSDSegmentedControlScrollOffset / 2, 0);
 
             if (!CGRectContainsRect(scrollRect, targetRect))
@@ -481,7 +480,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
                 // the animation is dispatched asynchronously, naturally.
                 _isScrollingBySelection = animated;
                 isScrollingSinceNow = YES;
-                [_scrollView scrollRectToVisible:targetRect animated:animated];
+                [self.scrollView scrollRectToVisible:targetRect animated:animated];
             }
         }
 
@@ -508,7 +507,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
         if (animated && _lastSelectedSegmentIndex != self.selectedSegmentIndex && _lastSelectedSegmentIndex >= 0 && _lastSelectedSegmentIndex < self._items.count)
         {
             SDSegmentView *lastSegmentView = [self._items objectAtIndex:_lastSelectedSegmentIndex];
-            oldPosition = lastSegmentView.center.x - _scrollView.contentOffset.x;
+            oldPosition = lastSegmentView.center.x - self.scrollView.contentOffset.x;
         }
 
         [self drawPathsFromPosition:oldPosition toPosition:selectedItemCenterPosition animationDuration:animated ? self.animationDuration : 0];

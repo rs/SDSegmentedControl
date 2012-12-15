@@ -22,6 +22,8 @@
 @property (assign, nonatomic) CGFloat interItemSpace UI_APPEARANCE_SELECTOR;
 @property (assign, nonatomic) UIEdgeInsets stainEdgeInsets UI_APPEARANCE_SELECTOR;
 
+@property UIScrollView *scrollView;
+
 @end
 
 @interface SDSegmentView : UIButton
