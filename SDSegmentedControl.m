@@ -88,6 +88,8 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     // Init properties
     _lastSelectedSegmentIndex = -1;
     _selectedSegmentIndex = -1;
+    _borderColor = UIColor.whiteColor;
+    _arrowHeightFactor = -1.0;
     _interItemSpace = kSDSegmentedControlInterItemSpace;
     _stainEdgeInsets = kSDSegmentedControlStainEdgeInsets;
     __items = NSMutableArray.new;
@@ -110,7 +112,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 
     // Init border bottom layer
     [self.layer addSublayer:_borderBottomLayer = CAShapeLayer.layer];
-    _borderBottomLayer.strokeColor = UIColor.whiteColor.CGColor;
+    _borderBottomLayer.strokeColor = _borderColor.CGColor;
     _borderBottomLayer.lineWidth = .5;
     _borderBottomLayer.fillColor = nil;
     [self.layer addSublayer:_borderBottomLayer];
@@ -378,11 +380,25 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     }
 }
 
+- (void)setBorderColor:(UIColor *)borderColor
+{
+    _borderBottomLayer.strokeColor = borderColor.CGColor;
+    _borderColor = borderColor;
+}
+
 - (void)setArrowSize:(CGFloat)arrowSize
 {
     _arrowSize = arrowSize;
     [self setNeedsLayout];
 }
+
+
+- (void)setArrowHeightFactor:(CGFloat)arrowHeightFactor
+{
+    _arrowHeightFactor = arrowHeightFactor;
+    [self setNeedsLayout];
+}
+
 
 - (void)layoutSubviews
 {
@@ -727,8 +743,9 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     const CGFloat left = CGRectGetMinX(self.bounds);
     const CGFloat right = CGRectGetMaxX(self.bounds);
     const CGFloat center = (right-left) / 2;
-    const CGFloat width = self.arrowSize - lineWidth;
-    const CGFloat height = self.arrowSize + lineWidth/2;
+    const CGFloat width = _arrowSize - lineWidth;
+    const CGFloat height = _arrowSize + lineWidth/2;
+    const CGFloat ratio = _arrowHeightFactor;
 
     __block NSMutableArray *points = NSMutableArray.new;
     BOOL hasCustomLastPoint = NO;
@@ -741,11 +758,17 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     // Add first point
     addPoint(left, point.y);
 
-    if (point.x >= left+width && point.x <= right-width)
+    if (_arrowSize <= 0.02)
+    {
+        addPoint(point.x - lineWidth, point.y);
+        addPoint(point.x,             point.y);
+        addPoint(point.x + lineWidth, point.y);
+    }
+    else if (point.x >= left+width && point.x <= right-width)
     {
         // Arrow is completely inside the view
         addPoint(point.x - width, point.y);
-        addPoint(point.x,         point.y - height);
+        addPoint(point.x,         point.y + ratio * height);
         addPoint(point.x + width, point.y);
     }
     else
@@ -766,17 +789,17 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
             if (point.x < left)
             {
                 CGFloat x = width + point.x;
-                addPoint(left,        point.y - x);
-                addPoint(left + 0.01, point.y - x + 0.01);
-                addPoint(left + 0.02, point.y - x + 0.02);
+                addPoint(left,        point.y + ratio * x);
+                addPoint(left + 0.01, point.y + ratio * (x + 0.01));
+                addPoint(left + 0.02, point.y + ratio * (x + 0.02));
                 addPoint(left + x,    point.y);
             }
             else
             {
                 CGFloat x = width - point.x;
-                addPoint(left,            point.y - x);
-                addPoint(left + 0.01,     point.y - x + 0.01);
-                addPoint(point.x,         point.y - height);
+                addPoint(left,            point.y + ratio * x);
+                addPoint(left + 0.01,     point.y + ratio * (x + 0.01));
+                addPoint(point.x,         point.y + ratio * height);
                 addPoint(point.x + width, point.y);
             }
         }
@@ -798,17 +821,17 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
             {
                 CGFloat x = width - (right - point.x);
                 addPoint(point.x - width, point.y);
-                addPoint(point.x,         point.y - height);
-                addPoint(right - 0.01,    point.y - x + 0.01);
-                addPoint(right,           point.y - x);
+                addPoint(point.x,         point.y + ratio * height);
+                addPoint(right - 0.01,    point.y + ratio * (x + 0.01));
+                addPoint(right,           point.y + ratio * x);
             }
             else
             {
                 CGFloat x = width + (right - point.x);
                 addPoint(right - x,    point.y);
-                addPoint(right - 0.02, point.y - x + 0.02);
-                addPoint(right - 0.01, point.y - x + 0.01);
-                addPoint(right,        point.y - x);
+                addPoint(right - 0.02, point.y + ratio * (x + 0.02));
+                addPoint(right - 0.01, point.y + ratio * (x + 0.01));
+                addPoint(right,        point.y + ratio * x);
             }
         }
         else

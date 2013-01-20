@@ -86,7 +86,9 @@
 {
     SDSegmentedControl *segmentedControlAppearance = SDSegmentedControl.appearance;
     segmentedControlAppearance.backgroundColor = UIColor.redColor;
+    segmentedControlAppearance.borderColor = UIColor.greenColor;
     segmentedControlAppearance.arrowSize = 10;
+    segmentedControlAppearance.arrowHeightFactor = 2.0;
 
     SDSegmentView *segmenteViewAppearance = SDSegmentView.appearance;
     [segmenteViewAppearance setTitleColor:UIColor.greenColor forState:UIControlStateNormal];
@@ -99,6 +101,16 @@
     stainViewAppearance.shadowBlur = 5;
 
     [self presentViewController:ViewController.new animated:NO completion:nil];
+}
+
+- (IBAction)toggleArrow:(id)sender
+{
+    SDSegmentedControl* sdSegmentedControl = (SDSegmentedControl *)_segmentedControl;
+    sdSegmentedControl.arrowSize = sdSegmentedControl.arrowSize > 0 ? 0 : 6.5;
+}
+
+- (IBAction)invertArrowDirection:(id)sender {
+    ((SDSegmentedControl *)_segmentedControl).arrowHeightFactor *= -1.0;
 }
 
 @end

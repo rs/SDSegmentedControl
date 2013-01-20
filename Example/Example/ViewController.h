@@ -18,5 +18,7 @@
 - (IBAction)disableSegment:(id)sender;
 - (IBAction)addImage:(id)sender;
 - (IBAction)customizeTheme:(id)sender;
+- (IBAction)toggleArrow:(id)sender;
+- (IBAction)invertArrowDirection:(id)sender;
 
 @end
