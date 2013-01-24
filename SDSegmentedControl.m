@@ -742,9 +742,9 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     const CGFloat left = CGRectGetMinX(self.bounds);
     const CGFloat right = CGRectGetMaxX(self.bounds);
     const CGFloat center = (right-left) / 2;
-    const CGFloat width = _arrowSize - lineWidth;
-    const CGFloat height = _arrowSize + lineWidth/2;
-    const CGFloat ratio = _arrowHeightFactor;
+    const CGFloat width = self.arrowSize - lineWidth;
+    const CGFloat height = self.arrowSize + lineWidth/2;
+    const CGFloat ratio = self.arrowHeightFactor;
 
     __block NSMutableArray *points = NSMutableArray.new;
     BOOL hasCustomLastPoint = NO;
