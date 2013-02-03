@@ -1011,6 +1011,8 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     appearance.shadowOffset = CGSizeMake(0, .5);
     appearance.shadowBlur = 2.5;
     appearance.shadowColor = UIColor.blackColor;
+    appearance.innerStrokeLineWidth = 1.5;
+    appearance.innerStrokeColor = UIColor.whiteColor;
 }
 
 + (id)appearance
@@ -1048,8 +1050,8 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 
     CGContextTranslateCTM(context, 0, -1);
     CGContextAddPath(context, roundedRect);
-    CGContextSetLineWidth(context, 1.5);
-    CGContextSetStrokeColorWithColor(context, UIColor.whiteColor.CGColor);
+    CGContextSetLineWidth(context, self.innerStrokeLineWidth);
+    CGContextSetStrokeColorWithColor(context, self.innerStrokeColor.CGColor);
     CGContextStrokePath(context);
 }
 

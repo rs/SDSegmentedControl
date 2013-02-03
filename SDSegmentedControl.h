@@ -41,5 +41,7 @@
 @property (assign, nonatomic) CGSize shadowOffset UI_APPEARANCE_SELECTOR;
 @property (assign, nonatomic) CGFloat shadowBlur UI_APPEARANCE_SELECTOR;
 @property (assign, nonatomic) UIColor *shadowColor UI_APPEARANCE_SELECTOR;
+@property (assign, nonatomic) CGFloat innerStrokeLineWidth UI_APPEARANCE_SELECTOR;
+@property (assign, nonatomic) UIColor *innerStrokeColor UI_APPEARANCE_SELECTOR;
 
 @end
