@@ -440,8 +440,8 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     [self._items enumerateObjectsUsingBlock:^(SDSegmentView *item, NSUInteger idx, BOOL *stop)
     {
         item.alpha = 1;
-        item.frame = CGRectMake(currentItemPosition, 0, CGRectGetWidth(item.bounds), itemHeight);
-        currentItemPosition += CGRectGetWidth(item.bounds) + self.interItemSpace;
+        item.frame = CGRectIntegral(CGRectMake(currentItemPosition, 0, CGRectGetWidth(item.bounds), itemHeight));
+        currentItemPosition = CGRectGetMaxX(item.frame) + self.interItemSpace;
     }];
 
     // Layout stain view and update items
@@ -466,7 +466,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
         CGRect stainFrame = UIEdgeInsetsInsetRect(selectedItem.innerFrame, self.stainEdgeInsets);
         self._selectedStainView.layer.cornerRadius = CGRectGetHeight(stainFrame) / 2;
         self._selectedStainView.hidden = NO;
-        stainFrame.origin.x = selectedItemCenterPosition - CGRectGetWidth(stainFrame) / 2;
+        stainFrame.origin.x = roundf(selectedItemCenterPosition - CGRectGetWidth(stainFrame) / 2);
         selectedItemCenterPosition -= self.scrollView.contentOffset.x;
 
         if (self.scrollView.contentSize.width > self.scrollView.bounds.size.width)
