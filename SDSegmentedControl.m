@@ -954,7 +954,8 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 {
     if (!image) return nil;
 
-    if (!CGSizeEqualToSize(image.size, self.imageSize))
+    // Scale down images that are too large 
+    if (image.size.width > self.imageSize.width || image.size.height > self.imageSize.height)
     {
         UIImageView *imageView = [UIImageView.alloc initWithFrame:CGRectMake(0, 0, self.imageSize.width, self.imageSize.height)];
         imageView.contentMode = UIViewContentModeScaleAspectFit;
