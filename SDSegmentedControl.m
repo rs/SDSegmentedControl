@@ -910,6 +910,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     [appearance setTitleColor:[UIColor colorWithWhite:0.800 alpha:1] forState:UIControlStateDisabled];
     [appearance setTitleShadowColor:UIColor.clearColor forState:UIControlStateDisabled];
 
+    [appearance setItemFont:[UIFont boldSystemFontOfSize:14]];
 }
 
 + (SDSegmentView *)new
@@ -928,7 +929,6 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     {
         _imageSize = kSDSegmentedControlImageSize;
         self.titleLabel.shadowOffset = CGSizeMake(0, 0.5);
-        self.titleLabel.font = [UIFont boldSystemFontOfSize:14];
         self.userInteractionEnabled = YES;
         self.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
         self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
@@ -997,6 +997,16 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     }
 
     return innerFrame;
+}
+
+- (void)setItemFont:(UIFont *)itemFont
+{
+    self.titleLabel.font = itemFont;
+}
+
+- (UIFont *)itemFont
+{
+    return self.titleLabel.font;
 }
 
 @end

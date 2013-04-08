@@ -31,6 +31,7 @@
 @interface SDSegmentView : UIButton
 
 @property (assign, nonatomic) CGSize imageSize UI_APPEARANCE_SELECTOR;
+@property (retain, nonatomic) UIFont *itemFont UI_APPEARANCE_SELECTOR;
 
 @end
 
