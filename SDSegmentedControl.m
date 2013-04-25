@@ -114,7 +114,6 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     _borderBottomLayer.strokeColor = _borderColor.CGColor;
     _borderBottomLayer.lineWidth = .5;
     _borderBottomLayer.fillColor = nil;
-    [self.layer addSublayer:_borderBottomLayer];
 
     // Init scrollView
     [self addSubview:_scrollView = UIScrollView.new];
