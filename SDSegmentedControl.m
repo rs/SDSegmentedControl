@@ -125,7 +125,6 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 
     // Init stain view
     [_scrollView addSubview:self._selectedStainView = SDStainView.new];
-    self._selectedStainView.backgroundColor = [UIColor colorWithWhite:0.816 alpha:1];
 }
 
 - (UIColor *)backgroundColor
@@ -1017,6 +1016,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 {
     [super initialize];
     SDStainView *appearance = [self appearance];
+    appearance.backgroundColor = [UIColor colorWithWhite:0.816 alpha:1];
     appearance.edgeInsets = UIEdgeInsetsMake(-.5, -.5, -.5, -.5);
     appearance.shadowOffset = CGSizeMake(0, .5);
     appearance.shadowBlur = 2.5;
