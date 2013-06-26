@@ -317,7 +317,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
         [self._items addObject:segmentView];
     }
 
-    if (self.selectedSegmentIndex >= index)
+    if (self.selectedSegmentIndex >= index && self.selectedSegmentIndex + 1 < self._items.count)
     {
         self.selectedSegmentIndex++;
     }
