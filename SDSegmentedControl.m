@@ -87,7 +87,6 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     // Init properties
     _lastSelectedSegmentIndex = -1;
     _selectedSegmentIndex = -1;
-    _borderColor = UIColor.whiteColor;
     _arrowHeightFactor = -1.0;
     _interItemSpace = kSDSegmentedControlInterItemSpace;
     _stainEdgeInsets = kSDSegmentedControlStainEdgeInsets;
@@ -102,17 +101,32 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     [self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
 
     // Init layer
-    self.backgroundColor = [UIColor colorWithRed:0.961 green:0.961 blue:0.961 alpha:1];
     self.layer.backgroundColor = UIColor.clearColor.CGColor;
-    self.layer.shadowColor = UIColor.blackColor.CGColor;
-    self.layer.shadowRadius = .8;
-    self.layer.shadowOpacity = .6;
-    self.layer.shadowOffset = CGSizeMake(0, 1);
+    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1)
+    {
+        self.backgroundColor = [UIColor colorWithRed:0.961 green:0.961 blue:0.961 alpha:1];
+        self.shadowColor = UIColor.blackColor;
+        self.shadowRadius = .8;
+        self.shadowOpacity = .6;
+        self.shadowOffset = CGSizeMake(0, 1);
+    }
+    else
+    {
+        self.backgroundColor = [UIColor clearColor];
+    }
 
     // Init border bottom layer
     [self.layer addSublayer:_borderBottomLayer = CAShapeLayer.layer];
-    _borderBottomLayer.strokeColor = _borderColor.CGColor;
-    _borderBottomLayer.lineWidth = .5;
+    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1)
+    {
+        self.borderColor = UIColor.whiteColor;
+        self.borderWidth = .5;
+    }
+    else
+    {
+        self.borderColor = UIColor.blackColor;
+        self.borderWidth = .25;
+    }
     _borderBottomLayer.fillColor = nil;
 
     // Init scrollView
@@ -135,6 +149,66 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 - (void)setBackgroundColor:(UIColor *)backgroundColor
 {
     ((CAShapeLayer *)self.layer).fillColor = backgroundColor.CGColor;
+}
+
+- (UIColor *)shadowColor
+{
+    return [UIColor colorWithCGColor:self.layer.shadowColor];
+}
+
+- (void)setShadowColor:(UIColor *)color
+{
+    self.layer.shadowColor = color.CGColor;
+}
+
+- (CGFloat)shadowRadius
+{
+    return self.layer.shadowRadius;
+}
+
+- (void)setShadowRadius:(CGFloat)shadowRadius
+{
+    self.layer.shadowRadius = shadowRadius;
+}
+
+- (CGFloat)shadowOpacity
+{
+    return self.layer.shadowOpacity;
+}
+
+- (void)setShadowOpacity:(CGFloat)shadowOpacity
+{
+    self.layer.shadowOpacity = shadowOpacity;
+}
+
+- (CGSize)shadowOffset
+{
+    return self.layer.shadowOffset;
+}
+
+- (void)setShadowOffset:(CGSize)shadowOffset
+{
+    self.layer.shadowOffset = shadowOffset;
+}
+
+- (CGFloat)borderWidth
+{
+    return _borderBottomLayer.lineWidth;
+}
+
+- (void)setBorderWidth:(CGFloat)borderWidth
+{
+    _borderBottomLayer.lineWidth = borderWidth;
+}
+
+- (UIColor *)borderColor
+{
+    return [UIColor colorWithCGColor:_borderBottomLayer.strokeColor];
+}
+
+- (void)setBorderColor:(UIColor *)borderColor
+{
+    _borderBottomLayer.strokeColor = borderColor.CGColor;
 }
 
 #pragma mark - UIKit API
@@ -266,7 +340,10 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 {
     if (_selectedSegmentIndex != selectedSegmentIndex)
     {
-        NSParameterAssert(selectedSegmentIndex < (NSInteger)self._items.count);
+        if (selectedSegmentIndex >= (NSInteger)self._items.count)
+        {
+            selectedSegmentIndex = self._items.count - 1;
+        }
         _lastSelectedSegmentIndex = _selectedSegmentIndex;
         _selectedSegmentIndex = selectedSegmentIndex;
         [self setNeedsLayout];
@@ -375,12 +452,6 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     {
         frame.size.width = CGRectGetWidth(newSuperview.bounds);
     }
-}
-
-- (void)setBorderColor:(UIColor *)borderColor
-{
-    _borderBottomLayer.strokeColor = borderColor.CGColor;
-    _borderColor = borderColor;
 }
 
 - (void)setArrowSize:(CGFloat)arrowSize
@@ -900,15 +971,15 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 
     SDSegmentView *appearance = [self appearance];
     [appearance setTitleColor:[UIColor colorWithWhite:0.392 alpha:1] forState:UIControlStateNormal];
-    [appearance setTitleShadowColor:UIColor.whiteColor forState:UIControlStateNormal];
-
     [appearance setTitleColor:[UIColor colorWithWhite:0.235 alpha:1] forState:UIControlStateSelected];
-    [appearance setTitleShadowColor:UIColor.whiteColor forState:UIControlStateSelected];
-
     [appearance setTitleColor:[UIColor colorWithWhite:0.800 alpha:1] forState:UIControlStateDisabled];
-    [appearance setTitleShadowColor:UIColor.clearColor forState:UIControlStateDisabled];
 
-    [appearance setItemFont:[UIFont boldSystemFontOfSize:14]];
+    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1)
+    {
+        [appearance setTitleShadowColor:UIColor.whiteColor forState:UIControlStateNormal];
+        [appearance setTitleShadowColor:UIColor.whiteColor forState:UIControlStateSelected];
+        [appearance setTitleShadowColor:UIColor.clearColor forState:UIControlStateDisabled];
+    }
 }
 
 + (SDSegmentView *)new
@@ -926,7 +997,18 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     if ((self = [super initWithFrame:frame]))
     {
         _imageSize = kSDSegmentedControlImageSize;
-        self.titleLabel.shadowOffset = CGSizeMake(0, 0.5);
+
+        if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1)
+        {
+            self.titleShadowOffset = CGSizeMake(0, 0.5);
+            self.titleFont = [UIFont boldSystemFontOfSize:14];
+        }
+        else
+        {
+            self.titleFont = [UIFont systemFontOfSize:14];
+            self.selectedTitleFont = [UIFont boldSystemFontOfSize:14];
+        }
+
         self.userInteractionEnabled = YES;
         self.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
         self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
@@ -941,6 +1023,47 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 #endif
     }
     return self;
+}
+
+- (void)setTitleFont:(UIFont *)titleFont
+{
+    _titleFont = titleFont;
+    if (self.state != UIControlStateSelected)
+    {
+        self.titleLabel.font = titleFont;
+    }
+}
+
+- (void)setSelectedTitleFont:(UIFont *)selectedTitleFont
+{
+    _selectedTitleFont = selectedTitleFont;
+    if (self.state == UIControlStateSelected)
+    {
+        self.titleLabel.font = selectedTitleFont;
+    }
+}
+
+- (void)setSelected:(BOOL)selected
+{
+    [super setSelected:selected];
+    if (selected)
+    {
+        self.titleLabel.font = self.selectedTitleFont ?: self.titleFont;
+    }
+    else
+    {
+        self.titleLabel.font = self.titleFont;
+    }
+}
+
+- (CGSize)titleShadowOffset
+{
+    return self.titleLabel.shadowOffset;
+}
+
+- (void)setTitleShadowOffset:(CGSize)titleShadowOffset
+{
+    self.titleLabel.shadowOffset = titleShadowOffset;
 }
 
 - (void)setImage:(UIImage *)image forState:(UIControlState)state
@@ -1018,11 +1141,20 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     SDStainView *appearance = [self appearance];
     appearance.backgroundColor = [UIColor colorWithWhite:0.816 alpha:1];
     appearance.edgeInsets = UIEdgeInsetsMake(-.5, -.5, -.5, -.5);
-    appearance.shadowOffset = CGSizeMake(0, .5);
-    appearance.shadowBlur = 2.5;
-    appearance.shadowColor = UIColor.blackColor;
-    appearance.innerStrokeLineWidth = 1.5;
-    appearance.innerStrokeColor = UIColor.whiteColor;
+
+    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1)
+    {
+        appearance.innerStrokeLineWidth = 1.5;
+        appearance.innerStrokeColor = UIColor.whiteColor;
+        appearance.backgroundColor = [UIColor colorWithWhite:0.816 alpha:1];
+        appearance.shadowOffset = CGSizeMake(0, .5);
+        appearance.shadowBlur = 2.5;
+        appearance.shadowColor = UIColor.blackColor;
+    }
+    else
+    {
+        appearance.backgroundColor = [UIColor clearColor];
+    }
 }
 
 + (id)appearance
@@ -1039,6 +1171,43 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     return self;
 }
 
+- (void)setBackgroundColor:(UIColor *)backgroundColor
+{
+    [super setBackgroundColor:backgroundColor];
+    _backgroundColor = backgroundColor;
+    [self setNeedsDisplay];
+}
+
+- (void)setEdgeInsets:(UIEdgeInsets)edgeInsets
+{
+    _edgeInsets = edgeInsets;
+    [self setNeedsDisplay];
+}
+
+- (void)setCornerRadius:(CGFloat)cornerRadius
+{
+    _cornerRadius = cornerRadius;
+    [self setNeedsDisplay];
+}
+
+- (void)setShadowOffset:(CGSize)shadowOffset
+{
+    _shadowOffset = shadowOffset;
+    [self setNeedsDisplay];
+}
+
+- (void)setShadowBlur:(CGFloat)shadowBlur
+{
+    _shadowBlur = shadowBlur;
+    [self setNeedsDisplay];
+}
+
+- (void)setShadowColor:(UIColor *)shadowColor
+{
+    _shadowColor = shadowColor;
+    [self setNeedsDisplay];
+}
+
 - (void)setFrame:(CGRect)frame
 {
     [super setFrame:frame];
@@ -1048,6 +1217,9 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 - (void)drawRect:(CGRect)rect
 {
     CGContextRef context = UIGraphicsGetCurrentContext();
+
+    [self.backgroundColor setFill];
+    CGContextFillRect(context, self.bounds);
 
     CGPathRef roundedRect = [UIBezierPath bezierPathWithRoundedRect:UIEdgeInsetsInsetRect(rect, self.edgeInsets) cornerRadius:self.layer.cornerRadius].CGPath;
     CGContextAddPath(context, roundedRect);
