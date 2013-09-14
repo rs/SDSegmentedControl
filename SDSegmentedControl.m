@@ -1121,16 +1121,6 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     return innerFrame;
 }
 
-- (void)setItemFont:(UIFont *)itemFont
-{
-    self.titleLabel.font = itemFont;
-}
-
-- (UIFont *)itemFont
-{
-    return self.titleLabel.font;
-}
-
 @end
 
 
@@ -1140,7 +1130,6 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 {
     [super initialize];
     SDStainView *appearance = [self appearance];
-    appearance.backgroundColor = [UIColor colorWithWhite:0.816 alpha:1];
     appearance.edgeInsets = UIEdgeInsetsMake(-.5, -.5, -.5, -.5);
 
     if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1)
