@@ -1031,6 +1031,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     if (self.state != UIControlStateSelected)
     {
         self.titleLabel.font = titleFont;
+        [self sizeToFit];
     }
 }
 
