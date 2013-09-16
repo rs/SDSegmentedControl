@@ -85,8 +85,8 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     self.frame = frame;
 
     // Init properties
-    _lastSelectedSegmentIndex = -1;
-    _selectedSegmentIndex = -1;
+    _lastSelectedSegmentIndex = UISegmentedControlNoSegment;
+    _selectedSegmentIndex = UISegmentedControlNoSegment;
     _arrowHeightFactor = -1.0;
     _interItemSpace = kSDSegmentedControlInterItemSpace;
     _stainEdgeInsets = kSDSegmentedControlStainEdgeInsets;
@@ -266,7 +266,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
         if (self._items.count == 1)
         {
             // Deselect if there is no item
-            self.selectedSegmentIndex = -1;
+            self.selectedSegmentIndex = UISegmentedControlNoSegment;
             changed = YES;
         }
         else if (self.selectedSegmentIndex == index)
@@ -312,7 +312,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 {
     [self._items makeObjectsPerformSelector:@selector(removeFromSuperview)];
     [self._items removeAllObjects];
-    self.selectedSegmentIndex = -1;
+    self.selectedSegmentIndex = UISegmentedControlNoSegment;
     [self setNeedsLayout];
 }
 
@@ -432,7 +432,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
         }
     }
 
-    return -1;
+    return UISegmentedControlNoSegment;
 }
 
 - (SDSegmentView *)segmentAtIndex:(NSUInteger)index
@@ -518,7 +518,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     BOOL isScrollingSinceNow = NO;
     CGFloat selectedItemCenterPosition;
 
-    if (self.selectedSegmentIndex == -1)
+    if (self.selectedSegmentIndex == UISegmentedControlNoSegment)
     {
         self._selectedStainView.hidden = YES;
         selectedItemCenterPosition = CGFLOAT_MAX;
