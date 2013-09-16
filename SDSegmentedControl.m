@@ -949,7 +949,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    if (_isScrollingBySelection) return;
+    if (_isScrollingBySelection || _selectedSegmentIndex == UISegmentedControlNoSegment) return;
     CGFloat selectedItemCenterPosition = ((SDSegmentView *)self._items[self.selectedSegmentIndex]).center.x;
     [self drawPathsToPosition:selectedItemCenterPosition - scrollView.contentOffset.x animated:NO];
     self._selectedStainView.center = CGPointMake(selectedItemCenterPosition, self._selectedStainView.center.y);
