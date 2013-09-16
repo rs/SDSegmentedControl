@@ -85,8 +85,8 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     self.frame = frame;
 
     // Init properties
-    _lastSelectedSegmentIndex = -1;
-    _selectedSegmentIndex = -1;
+    _lastSelectedSegmentIndex = UISegmentedControlNoSegment;
+    _selectedSegmentIndex = UISegmentedControlNoSegment;
     _arrowHeightFactor = -1.0;
     _interItemSpace = kSDSegmentedControlInterItemSpace;
     _stainEdgeInsets = kSDSegmentedControlStainEdgeInsets;
@@ -266,7 +266,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
         if (self._items.count == 1)
         {
             // Deselect if there is no item
-            self.selectedSegmentIndex = -1;
+            self.selectedSegmentIndex = UISegmentedControlNoSegment;
             changed = YES;
         }
         else if (self.selectedSegmentIndex == index)
@@ -312,7 +312,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 {
     [self._items makeObjectsPerformSelector:@selector(removeFromSuperview)];
     [self._items removeAllObjects];
-    self.selectedSegmentIndex = -1;
+    self.selectedSegmentIndex = UISegmentedControlNoSegment;
     [self setNeedsLayout];
 }
 
@@ -432,7 +432,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
         }
     }
 
-    return -1;
+    return UISegmentedControlNoSegment;
 }
 
 - (SDSegmentView *)segmentAtIndex:(NSUInteger)index
@@ -518,7 +518,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     BOOL isScrollingSinceNow = NO;
     CGFloat selectedItemCenterPosition;
 
-    if (self.selectedSegmentIndex == -1)
+    if (self.selectedSegmentIndex == UISegmentedControlNoSegment)
     {
         self._selectedStainView.hidden = YES;
         selectedItemCenterPosition = CGFLOAT_MAX;
@@ -949,7 +949,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    if (_isScrollingBySelection) return;
+    if (_isScrollingBySelection || _selectedSegmentIndex == UISegmentedControlNoSegment) return;
     CGFloat selectedItemCenterPosition = ((SDSegmentView *)self._items[self.selectedSegmentIndex]).center.x;
     [self drawPathsToPosition:selectedItemCenterPosition - scrollView.contentOffset.x animated:NO];
     self._selectedStainView.center = CGPointMake(selectedItemCenterPosition, self._selectedStainView.center.y);
