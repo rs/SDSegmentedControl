@@ -29,7 +29,7 @@
 @property (assign, nonatomic) CGFloat shadowOpacity UI_APPEARANCE_SELECTOR;
 @property (assign, nonatomic) CGSize shadowOffset UI_APPEARANCE_SELECTOR;
 
-@property UIScrollView *scrollView;
+@property (assign,nonatomic) UIScrollView *scrollView;
 
 @end
 
