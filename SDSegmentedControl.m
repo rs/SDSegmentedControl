@@ -534,7 +534,8 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 
         CGRect stainFrame = UIEdgeInsetsInsetRect(selectedItem.innerFrame, self.stainEdgeInsets);
         CGFloat cornerRadius = 0;
-        if ([self._selectedStainView isKindOfClass:[SDStainView class]]) {
+        if ([self._selectedStainView isKindOfClass:[SDStainView class]])
+        {
             cornerRadius = [(SDStainView *)self._selectedStainView cornerRadius];
         }
         self._selectedStainView.layer.cornerRadius = cornerRadius ? cornerRadius : (CGRectGetHeight(stainFrame) / 2);
