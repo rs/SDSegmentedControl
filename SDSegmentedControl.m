@@ -533,7 +533,11 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
         selectedItemCenterPosition = selectedItem.center.x;
 
         CGRect stainFrame = UIEdgeInsetsInsetRect(selectedItem.innerFrame, self.stainEdgeInsets);
-        self._selectedStainView.layer.cornerRadius = CGRectGetHeight(stainFrame) / 2;
+        CGFloat cornerRadius = 0;
+        if ([self._selectedStainView respondsToSelector:@selector(cornerRadius)]) {
+            cornerRadius = [(SDStainView *)self._selectedStainView cornerRadius];
+        }
+        self._selectedStainView.layer.cornerRadius = cornerRadius ? cornerRadius : (CGRectGetHeight(stainFrame) / 2);
         self._selectedStainView.hidden = NO;
         stainFrame.origin.x = roundf(selectedItemCenterPosition - CGRectGetWidth(stainFrame) / 2);
         selectedItemCenterPosition -= self.scrollView.contentOffset.x;
