@@ -966,6 +966,13 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 
 @end
 
+@interface SDSegmentView ()
+
+@property (nonatomic, strong) UIColor *titleColorNormal;
+@property (nonatomic, strong) UIColor *titleColorSelected;
+@property (nonatomic, strong) UIColor *titleColorDisabled;
+
+@end
 
 @implementation SDSegmentView
 
@@ -1125,6 +1132,47 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     return innerFrame;
 }
 
+- (void)tintColorDidChange
+{
+    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1) {
+        
+        [super tintColorDidChange];
+        
+        switch (self.tintAdjustmentMode) {
+            case UIViewTintAdjustmentModeAutomatic:
+            case UIViewTintAdjustmentModeNormal:
+                
+                if (self.titleColorNormal) {
+                    [self setTitleColor:self.titleColorNormal forState:UIControlStateNormal];
+                    self.titleColorNormal = nil;
+                }
+                
+                if (self.titleColorSelected) {
+                    [self setTitleColor:self.titleColorSelected forState:UIControlStateSelected];
+                    self.titleColorSelected = nil;
+                }
+                
+                if (self.titleColorDisabled) {
+                    [self setTitleColor:self.titleColorDisabled forState:UIControlStateDisabled];
+                    self.titleColorDisabled = nil;
+                }
+
+                break;
+            case UIViewTintAdjustmentModeDimmed:
+                
+                self.titleColorNormal = [self titleColorForState:UIControlStateNormal];
+                self.titleColorSelected = [self titleColorForState:UIControlStateSelected];
+                self.titleColorDisabled = [self titleColorForState:UIControlStateDisabled];
+                
+                [self setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+                [self setTitleColor:[UIColor lightGrayColor] forState:UIControlStateSelected];
+                [self setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
+                
+                break;
+        }
+    }
+}
+
 @end
 
 
@@ -1211,8 +1259,35 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 - (void)drawRect:(CGRect)rect
 {
     CGContextRef context = UIGraphicsGetCurrentContext();
-
+    
+    UIColor *shadowColor = self.shadowColor;
+    UIColor *innerStrokeColor = self.innerStrokeColor;
     [self.backgroundColor setFill];
+    
+    if ([self respondsToSelector:@selector(tintAdjustmentMode)]) {
+    
+        switch (self.tintAdjustmentMode) {
+            case UIViewTintAdjustmentModeAutomatic:
+            case UIViewTintAdjustmentModeNormal:
+                break;
+            case UIViewTintAdjustmentModeDimmed:
+                
+                if (self.backgroundColor && ![self.backgroundColor isEqual:[UIColor clearColor]]) {
+                    [[UIColor lightGrayColor] setFill];
+                }
+        
+                if (self.shadowColor && ![self.shadowColor isEqual:[UIColor clearColor]]) {
+                    shadowColor = [UIColor lightGrayColor];
+                }
+                
+                if (self.innerStrokeColor && ![self.innerStrokeColor isEqual:[UIColor clearColor]]) {
+                    innerStrokeColor = [UIColor lightGrayColor];
+                }
+                
+                break;
+        }
+    }
+    
     CGContextFillRect(context, self.bounds);
 
     CGPathRef roundedRect = [UIBezierPath bezierPathWithRoundedRect:UIEdgeInsetsInsetRect(rect, self.edgeInsets) cornerRadius:self.layer.cornerRadius].CGPath;
@@ -1220,15 +1295,25 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     CGContextClip(context);
 
     CGContextAddPath(context, roundedRect);
-    CGContextSetShadowWithColor(UIGraphicsGetCurrentContext(), self.shadowOffset, self.shadowBlur, self.shadowColor.CGColor);
+    CGContextSetShadowWithColor(UIGraphicsGetCurrentContext(), self.shadowOffset, self.shadowBlur, shadowColor.CGColor);
     CGContextSetStrokeColorWithColor(context, self.backgroundColor.CGColor);
     CGContextStrokePath(context);
 
     CGContextTranslateCTM(context, 0, -1);
     CGContextAddPath(context, roundedRect);
     CGContextSetLineWidth(context, self.innerStrokeLineWidth);
-    CGContextSetStrokeColorWithColor(context, self.innerStrokeColor.CGColor);
+    CGContextSetStrokeColorWithColor(context, innerStrokeColor.CGColor);
     CGContextStrokePath(context);
+}
+
+- (void)tintColorDidChange
+{
+    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1) {
+    
+        [super tintColorDidChange];
+
+        [self setNeedsDisplay];
+    }
 }
 
 @end
