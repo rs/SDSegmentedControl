@@ -1165,7 +1165,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
                 self.titleColorDisabled = [self titleColorForState:UIControlStateDisabled];
                 
                 [self setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-                [self setTitleColor:[UIColor lightGrayColor] forState:UIControlStateSelected];
+                [self setTitleColor:[UIColor grayColor] forState:UIControlStateSelected];
                 [self setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
                 
                 break;
