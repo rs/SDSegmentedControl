@@ -4,6 +4,12 @@
 //  Contributed by Marius Rackwitz on 19/10/12
 //
 
+#ifdef NSFoundationVersionNumber_iOS_6_1
+#define SD_IS_IOS7 (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1)
+#else
+#define SD_IS_IOS7 NO
+#endif
+
 #import "SDSegmentedControl.h"
 #import <QuartzCore/QuartzCore.h>
 
@@ -102,7 +108,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 
     // Init layer
     self.layer.backgroundColor = UIColor.clearColor.CGColor;
-    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1)
+    if (!SD_IS_IOS7)
     {
         self.backgroundColor = [UIColor colorWithRed:0.961 green:0.961 blue:0.961 alpha:1];
         self.shadowColor = UIColor.blackColor;
@@ -117,7 +123,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 
     // Init border bottom layer
     [self.layer addSublayer:_borderBottomLayer = CAShapeLayer.layer];
-    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1)
+    if (!SD_IS_IOS7)
     {
         self.borderColor = UIColor.whiteColor;
         self.borderWidth = .5;
@@ -986,7 +992,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     [appearance setTitleColor:[UIColor colorWithWhite:0.235 alpha:1] forState:UIControlStateSelected];
     [appearance setTitleColor:[UIColor colorWithWhite:0.800 alpha:1] forState:UIControlStateDisabled];
 
-    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1)
+    if (!SD_IS_IOS7)
     {
         [appearance setTitleShadowColor:UIColor.whiteColor forState:UIControlStateNormal];
         [appearance setTitleShadowColor:UIColor.whiteColor forState:UIControlStateSelected];
@@ -1010,7 +1016,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     {
         _imageSize = kSDSegmentedControlImageSize;
 
-        if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1)
+        if (!SD_IS_IOS7)
         {
             self.titleShadowOffset = CGSizeMake(0, 0.5);
             self.titleFont = [UIFont boldSystemFontOfSize:14];
@@ -1135,25 +1141,29 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 
 - (void)tintColorDidChange
 {
-    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1) {
-        
+    if (SD_IS_IOS7)
+    {
         [super tintColorDidChange];
         
-        switch (self.tintAdjustmentMode) {
+        switch (self.tintAdjustmentMode)
+        {
             case UIViewTintAdjustmentModeAutomatic:
             case UIViewTintAdjustmentModeNormal:
                 
-                if (self.titleColorNormal) {
+                if (self.titleColorNormal)
+                {
                     [self setTitleColor:self.titleColorNormal forState:UIControlStateNormal];
                     self.titleColorNormal = nil;
                 }
                 
-                if (self.titleColorSelected) {
+                if (self.titleColorSelected)
+                {
                     [self setTitleColor:self.titleColorSelected forState:UIControlStateSelected];
                     self.titleColorSelected = nil;
                 }
                 
-                if (self.titleColorDisabled) {
+                if (self.titleColorDisabled)
+                {
                     [self setTitleColor:self.titleColorDisabled forState:UIControlStateDisabled];
                     self.titleColorDisabled = nil;
                 }
@@ -1185,7 +1195,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     SDStainView *appearance = [self appearance];
     appearance.edgeInsets = UIEdgeInsetsMake(-.5, -.5, -.5, -.5);
 
-    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1)
+    if (!SD_IS_IOS7)
     {
         appearance.innerStrokeLineWidth = 1.5;
         appearance.innerStrokeColor = UIColor.whiteColor;
@@ -1309,10 +1319,9 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
 
 - (void)tintColorDidChange
 {
-    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1) {
-    
+    if (SD_IS_IOS7)
+    {
         [super tintColorDidChange];
-
         [self setNeedsDisplay];
     }
 }
