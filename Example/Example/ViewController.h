@@ -20,5 +20,6 @@
 - (IBAction)customizeTheme:(id)sender;
 - (IBAction)toggleArrow:(id)sender;
 - (IBAction)invertArrowDirection:(id)sender;
+- (IBAction)changeArrowPosition:(id)sender;
 
 @end

@@ -94,6 +94,7 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     _lastSelectedSegmentIndex = UISegmentedControlNoSegment;
     _selectedSegmentIndex = UISegmentedControlNoSegment;
     _arrowHeightFactor = -1.0;
+    _arrowPosition = SDSegmentedArrowPositionBottom;
     _interItemSpace = kSDSegmentedControlInterItemSpace;
     _stainEdgeInsets = kSDSegmentedControlStainEdgeInsets;
     __items = NSMutableArray.new;
@@ -466,6 +467,11 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     [self setNeedsLayout];
 }
 
+-(void)setArrowPosition:(SDSegmentedArrowPosition)arrowPosition
+{
+    _arrowPosition = arrowPosition;
+    [self setNeedsLayout];
+}
 
 - (void)setArrowHeightFactor:(CGFloat)arrowHeightFactor
 {
@@ -641,9 +647,18 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     //
     __block UIBezierPath *path = UIBezierPath.new;
     [path moveToPoint:bounds.origin];
-    [self addArrowAtPoint:CGPointMake(position, bottom) toPath:path withLineWidth:0.0];
-    [path addLineToPoint:CGPointMake(right, top)];
-    [path addLineToPoint:CGPointMake(left, top)];
+    if(_arrowPosition == SDSegmentedArrowPositionBottom)
+    {
+        [self addArrowAtPoint:CGPointMake(position, bottom) toPath:path withLineWidth:0.0];
+        [path addLineToPoint:CGPointMake(right, top)];
+        [path addLineToPoint:CGPointMake(left, top)];
+    }
+    else
+    {
+        [self addArrowAtPoint:CGPointMake(position, top) toPath:path withLineWidth:0.0];
+        [path addLineToPoint:CGPointMake(right, bottom)];
+        [path addLineToPoint:CGPointMake(left, bottom)];
+    }
 
     //
     // Shadow mask
@@ -651,16 +666,29 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     top += 10;
     __block UIBezierPath *shadowPath = UIBezierPath.new;
     [shadowPath moveToPoint:CGPointMake(left, top)];
-    [self addArrowAtPoint:CGPointMake(position, bottom) toPath:shadowPath withLineWidth:0.0];
-    [shadowPath addLineToPoint:CGPointMake(right, top)];
-    [shadowPath addLineToPoint:CGPointMake(left, top)];
+    if(_arrowPosition == SDSegmentedArrowPositionBottom)
+    {
+        [self addArrowAtPoint:CGPointMake(position, bottom) toPath:shadowPath withLineWidth:0.0];
+        [shadowPath addLineToPoint:CGPointMake(right, top)];
+        [shadowPath addLineToPoint:CGPointMake(left, top)];
+    }else
+    {
+        [self addArrowAtPoint:CGPointMake(position, top) toPath:shadowPath withLineWidth:0.0];
+        [shadowPath addLineToPoint:CGPointMake(right, bottom)];
+        [shadowPath addLineToPoint:CGPointMake(left, bottom)];
+    }
 
     //
-    // Bottom white line
+    // Bottom/Top border line
     //
     _borderBottomLayer.frame = self.bounds;
     __block UIBezierPath *borderBottomPath = UIBezierPath.new;
-    const CGFloat lineY = bottom - _borderBottomLayer.lineWidth;
+    CGFloat lineLocation;
+    if(_arrowPosition == SDSegmentedArrowPositionBottom)
+        lineLocation = bottom - _borderBottomLayer.lineWidth;
+    else
+        lineLocation = _borderBottomLayer.lineWidth;
+    const CGFloat lineY = lineLocation;
     [self addArrowAtPoint:CGPointMake(position, lineY) toPath:borderBottomPath withLineWidth:_borderBottomLayer.lineWidth];
 
 
