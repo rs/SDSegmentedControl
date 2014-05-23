@@ -87,8 +87,8 @@
     SDSegmentedControl *segmentedControlAppearance = SDSegmentedControl.appearance;
     segmentedControlAppearance.backgroundColor = UIColor.redColor;
     segmentedControlAppearance.borderColor = UIColor.greenColor;
-    segmentedControlAppearance.arrowSize = 10;
-    segmentedControlAppearance.arrowHeightFactor = 2.0;
+    segmentedControlAppearance.arrowSize = 20;
+    segmentedControlAppearance.arrowHeightFactor = 0.50;
 
     SDSegmentView *segmenteViewAppearance = SDSegmentView.appearance;
     [segmenteViewAppearance setTitleColor:UIColor.greenColor forState:UIControlStateNormal];
@@ -111,6 +111,12 @@
 
 - (IBAction)invertArrowDirection:(id)sender {
     ((SDSegmentedControl *)_segmentedControl).arrowHeightFactor *= -1.0;
+}
+
+- (IBAction)changeArrowPosition:(id)sender;
+{
+    SDSegmentedControl* sdSegmentedControl = (SDSegmentedControl *)_segmentedControl;
+    sdSegmentedControl.arrowPosition = sdSegmentedControl.arrowPosition == SDSegmentedArrowPositionBottom ? SDSegmentedArrowPositionTop : SDSegmentedArrowPositionBottom;
 }
 
 @end

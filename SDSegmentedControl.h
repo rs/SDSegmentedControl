@@ -14,12 +14,18 @@
 //  +[SDSegmentView appearance]
 //  +[SDStainView appearance]
 
+typedef enum {
+    SDSegmentedArrowPositionBottom,
+    SDSegmentedArrowPositionTop
+} SDSegmentedArrowPosition;
+
 @interface SDSegmentedControl : UISegmentedControl <UIScrollViewDelegate>
 
 @property (retain, nonatomic) UIColor *backgroundColor UI_APPEARANCE_SELECTOR;
 @property (retain, nonatomic) UIColor *borderColor UI_APPEARANCE_SELECTOR;
 @property (assign, nonatomic) CGFloat borderWidth UI_APPEARANCE_SELECTOR;
 @property (assign, nonatomic) CGFloat arrowSize UI_APPEARANCE_SELECTOR;
+@property (assign, nonatomic) SDSegmentedArrowPosition arrowPosition UI_APPEARANCE_SELECTOR;
 @property (assign, nonatomic) CGFloat arrowHeightFactor UI_APPEARANCE_SELECTOR;
 @property (assign, nonatomic) CFTimeInterval animationDuration UI_APPEARANCE_SELECTOR;
 @property (assign, nonatomic) CGFloat interItemSpace UI_APPEARANCE_SELECTOR;
