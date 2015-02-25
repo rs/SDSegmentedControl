@@ -89,6 +89,8 @@
     segmentedControlAppearance.borderColor = UIColor.greenColor;
     segmentedControlAppearance.arrowSize = 20;
     segmentedControlAppearance.arrowHeightFactor = 0.50;
+    segmentedControlAppearance.titleFont = [UIFont fontWithName:@"Copperplate" size:15.0];
+    segmentedControlAppearance.selectedTitleFont = [UIFont fontWithName:@"BradleyHandITCTT-Bold" size:15.0];
 
     SDSegmentView *segmenteViewAppearance = SDSegmentView.appearance;
     [segmenteViewAppearance setTitleColor:UIColor.greenColor forState:UIControlStateNormal];
