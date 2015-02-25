@@ -218,6 +218,29 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     _borderBottomLayer.strokeColor = borderColor.CGColor;
 }
 
+- (void)setTitleFont:(UIFont *)titleFont
+{
+  _titleFont = titleFont;
+  
+  for (int i = 0; i < self._items.count; i++)
+  {
+    SDSegmentView *segmentView = (SDSegmentView *)self._items[i];
+    segmentView.titleFont = titleFont;
+  }
+}
+
+- (void)setSelectedTitleFont:(UIFont *)selectedTitleFont
+{
+  _selectedTitleFont = selectedTitleFont;
+  
+  for (int i = 0; i < self._items.count; i++)
+  {
+    SDSegmentView *segmentView = (SDSegmentView *)self._items[i];
+    segmentView.selectedTitleFont = selectedTitleFont;
+  }
+}
+
+
 #pragma mark - UIKit API
 
 - (void)insertSegmentWithImage:(UIImage *)image atIndex:(NSUInteger)index animated:(BOOL)animated
@@ -385,6 +408,8 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     segmentView.alpha = 0;
     [segmentView setTitle:title forState:UIControlStateNormal];
     [segmentView setImage:image forState:UIControlStateNormal];
+    [segmentView setTitleFont:self.titleFont];
+    [segmentView setSelectedTitleFont:self.selectedTitleFont];
     [segmentView sizeToFit];
 
     index = MAX(MIN(index, self.numberOfSegments), 0);

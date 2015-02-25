@@ -34,6 +34,8 @@ typedef enum {
 @property (assign, nonatomic) CGFloat shadowRadius UI_APPEARANCE_SELECTOR;
 @property (assign, nonatomic) CGFloat shadowOpacity UI_APPEARANCE_SELECTOR;
 @property (assign, nonatomic) CGSize shadowOffset UI_APPEARANCE_SELECTOR;
+@property (retain, nonatomic) UIFont *titleFont UI_APPEARANCE_SELECTOR;
+@property (retain, nonatomic) UIFont *selectedTitleFont UI_APPEARANCE_SELECTOR;
 
 @property (assign,nonatomic) UIScrollView *scrollView;
 
@@ -42,8 +44,8 @@ typedef enum {
 @interface SDSegmentView : UIButton
 
 @property (assign, nonatomic) CGSize imageSize UI_APPEARANCE_SELECTOR;
-@property (retain, nonatomic) UIFont *titleFont UI_APPEARANCE_SELECTOR;
-@property (retain, nonatomic) UIFont *selectedTitleFont UI_APPEARANCE_SELECTOR;
+@property (retain, nonatomic) UIFont *titleFont;
+@property (retain, nonatomic) UIFont *selectedTitleFont;
 @property (assign, nonatomic) CGSize titleShadowOffset UI_APPEARANCE_SELECTOR;
 
 @end
