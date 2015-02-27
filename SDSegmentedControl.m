@@ -486,6 +486,12 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     }
 }
 
+// Layout Needed when switching from and to the View embedding an SDSegmentedControl using a Tab Bar
+- (void)willMoveToWindow:(UIWindow *)newWindow {
+  [super willMoveToWindow:newWindow];
+  [self setNeedsLayout];
+}
+
 - (void)setArrowSize:(CGFloat)arrowSize
 {
     _arrowSize = arrowSize;
