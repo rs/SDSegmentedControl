@@ -547,17 +547,23 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     // Center all items horizontally and each item vertically
     CGFloat spaceLeft = self.scrollView.contentSize.width - totalWidth;
     CGFloat itemHeight = self.scrollView.contentSize.height - self.arrowSize / 2 + .5;
-    
-    // Modified this logic in order to space items so that they would remain centered if there is enough space
-    // to display them without scrolling.
+
     currentItemPosition += spaceLeft / 2;
-    CGFloat sectionWidth = totalWidth / self._items.count;
     [self._items enumerateObjectsUsingBlock:^(SDSegmentView *item, NSUInteger idx, BOOL *stop)
     {
         item.alpha = 1;
-        item.frame = CGRectIntegral(CGRectMake(0, 0, CGRectGetWidth(item.bounds), itemHeight));
-        item.center = CGPointMake(currentItemPosition + sectionWidth / 2, item.center.y);
-        currentItemPosition += sectionWidth;
+
+        if (self.centerSegmentsIfPossible) {
+            // Space items so that they would remain centered if there is enough space to display them without scrolling.
+            CGFloat sectionWidth = totalWidth / self._items.count;
+            item.frame = CGRectIntegral(CGRectMake(0, 0, CGRectGetWidth(item.bounds), itemHeight));
+            item.center = CGPointMake(currentItemPosition + sectionWidth / 2, item.center.y);
+            currentItemPosition += sectionWidth;
+        }
+        else {
+            item.frame = CGRectIntegral(CGRectMake(currentItemPosition, 0, CGRectGetWidth(item.bounds), itemHeight));
+            currentItemPosition = CGRectGetMaxX(item.frame) + self.interItemSpace;
+        }
     }];
 
     // Layout stain view and update items

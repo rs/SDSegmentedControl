@@ -36,6 +36,7 @@ typedef enum {
 @property (assign, nonatomic) CGSize shadowOffset UI_APPEARANCE_SELECTOR;
 @property (retain, nonatomic) UIFont *titleFont UI_APPEARANCE_SELECTOR;
 @property (retain, nonatomic) UIFont *selectedTitleFont UI_APPEARANCE_SELECTOR;
+@property (assign, nonatomic) BOOL centerSegmentsIfPossible UI_APPEARANCE_SELECTOR;
 
 @property (assign,nonatomic) UIScrollView *scrollView;
 
