@@ -522,12 +522,12 @@ const CGFloat kSDSegmentedControlScrollOffset = 20;
     currentItemPosition += spaceLeft / 2;
     CGFloat sectionWidth = totalWidth / self._items.count;
     [self._items enumerateObjectsUsingBlock:^(SDSegmentView *item, NSUInteger idx, BOOL *stop)
-     {
-         item.alpha = 1;
-         item.frame = CGRectIntegral(CGRectMake(0, 0, CGRectGetWidth(item.bounds), itemHeight));
-         item.center = CGPointMake(currentItemPosition + sectionWidth / 2, item.center.y);
-         currentItemPosition += sectionWidth;
-     }];
+    {
+        item.alpha = 1;
+        item.frame = CGRectIntegral(CGRectMake(0, 0, CGRectGetWidth(item.bounds), itemHeight));
+        item.center = CGPointMake(currentItemPosition + sectionWidth / 2, item.center.y);
+        currentItemPosition += sectionWidth;
+    }];
 
     // Layout stain view and update items
     BOOL animated = self.animationDuration && !CGRectEqualToRect(self._selectedStainView.frame, CGRectZero);
