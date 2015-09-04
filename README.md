@@ -2,7 +2,7 @@
 
 A drop-in remplacement for UISegmentedControl that mimic iOS 6 AppStore tab controls.
 
-![The only good piece of UI to extract for this terrible app](http://d.pr/i/Fn5X+)
+![The only good piece of UI to extract for this terrible app](https://raw.githubusercontent.com/rs/SDSegmentedControl/master/doc/screencast.gif)
 
 ## Features
 
