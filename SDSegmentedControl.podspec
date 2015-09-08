@@ -3,7 +3,7 @@
 # valid spec.
 Pod::Spec.new do |s|
   s.name         = "SDSegmentedControl"
-  s.version      = "1.0.4"
+  s.version      = "1.0.5"
   s.homepage     = "https://github.com/rs/SDSegmentedControl"
   s.summary      = "A drop-in remplacement for UISegmentedControl that mimic iOS 6 AppStore tab controls."
   s.description  = <<-DESC
